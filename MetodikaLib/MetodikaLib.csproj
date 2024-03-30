@@ -6,4 +6,10 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Reference Include="MihStatLibrary">
+      <HintPath>..\..\..\Libs\MihStatLibrary\MihStatLibrary.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>
