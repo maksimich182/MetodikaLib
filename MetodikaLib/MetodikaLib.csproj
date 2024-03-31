@@ -7,6 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Reference Include="MathNet.Numerics">
+      <HintPath>..\..\..\Libs\MathNetNumerics\MathNet.Numerics.dll</HintPath>
+    </Reference>
     <Reference Include="MihStatLibrary">
       <HintPath>..\..\..\Libs\MihStatLibrary\MihStatLibrary.dll</HintPath>
     </Reference>

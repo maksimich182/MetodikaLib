@@ -1,4 +1,6 @@
-﻿using MihStatLibrary.Tables;
+﻿using MathNet.Numerics.Distributions;
+using MihStatLibrary;
+using MihStatLibrary.Tables;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -6,12 +8,12 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
-using static MetodikaLib.Tools;
+using static MetodikaLib.Constants;
 
 namespace MetodikaLib.Tests
 {
     /// <summary>
-    /// Класс проверки гипотезы независимости знаков (Тест 2.1)
+    /// Класс проверки гипотезы независимости знаков (Тест 2.1 и 3.2)
     /// </summary>
     public class IndependenceSigns
     {
@@ -20,6 +22,7 @@ namespace MetodikaLib.Tests
         private List<double> _statistics;
         private bool _isSuccess;
         private GammaType _type;
+        private bool _autoBreak;
 
         /// <summary>
         /// Событие изменения прогресса проведения теста
@@ -36,91 +39,72 @@ namespace MetodikaLib.Tests
         /// </summary>
         /// <param name="beginK">Значение k с которого начинаем рассчеты</param>
         /// <param name="type">Тип гаммы</param>
-        public IndependenceSigns(int beginK = 1, GammaType type = GammaType.InputGamma)
+        /// <param name="autoBreak">Если true - рассчеты завершатся в момент провала теста, если false - рассчеты будут проходить до вычисленного kMax</param>
+        public IndependenceSigns(int beginK = 1, GammaType type = GammaType.InputGamma, bool autoBreak = true)
         {
             _isSuccess = false;
             _beginK = beginK;
             _type = type;
             _pValues = new List<double>();
             _statistics = new List<double>();
+            _autoBreak = autoBreak;
         }
-
-        /// <summary>
-        /// Вывод данных в консоль
-        /// </summary>
-        //public void Print()
-        //{
-        //    Console.WriteLine($"Тест 2.1: Независимость");
-        //    for (int i = 0; i < _statistics.Count; i++)
-        //    {
-        //        Console.WriteLine($"k = {i + 1}; Pk = {_statistics[i]}");
-        //    }
-        //}
 
         /// <summary>
         /// Функция рассчета статистики независимости знаков
         /// </summary>
-        /// <param name="pFileName">Имя файла с данными</param>
+        /// <param name="fileName">Имя файла с данными</param>
         /// <returns>Результат теста</returns>
-        public bool Test(string pFileName, double pAlpha)
+        public bool Test(string fileName, double alpha)
         {
-            double dPk = 0;
+            double Pk = 0;
 
-            try
+            MarkTable markTableOriginal = new MarkTable(Constants.MIN_MAX_K + 1, 1);
+            MarkTable markTableBuffer;
+            markTableOriginal.ProgressChanged += _onProgressChanged!;
+            markTableOriginal.ProcessChanged += _onProcessChanged!;
+            markTableOriginal.Calculate(fileName);
+            for (int dimension = _beginK; dimension <= Constants.MIN_MAX_K; dimension++)
             {
-                MarkTable fqSource = new MarkTable(Tools.MIN_MAX_K + 1, 1);
-                MarkTable fqTemp;
-                fqSource.ProgressChanged += _onProgressChanged;
-                fqSource.ProcessChanged += _onProcessChanged;
-                fqSource.Calculate(pFileName);
-                for (int dimension = _beginK; dimension <= Tools.MIN_MAX_K; dimension++)
+
+                markTableBuffer = new MarkTable(dimension + 1);
+                markTableOriginal.Reduce(markTableBuffer);
+                if (_autoBreak == true && _isDimensionMax(markTableBuffer) == true)
                 {
+                    _isSuccess = true;
+                    return true;
 
-                    Console.WriteLine($"k = {dimension}");
-                    //ComOleg 
-                    fqTemp = new MarkTable(dimension + 1);
-                    fqSource.Reduce(fqTemp);
-                    //FreqHistogram fqTemp = new FreqHistogram(dimension + 1);
-                    //fqTemp.EventReportProgress += _onProgressChanged;
-                    //fqTemp.EventReportProcess += _onProcessChanged;
-                    //fqTemp.Calculate(pFileName);
-                    //if (_isDimensionMax(fqTemp) == true)
-                    //{
-                    //	_bIsSuccess = true;
-                    //	return true;
-                    //}
-
-                    dPk = _getPk(fqTemp);
-                    Console.WriteLine($"k = {dimension}; Pk = {dPk}");
-
-                    if (dPk < pAlpha)
-                    {
-                        _isSuccess = false;
-                        return false;
-                    }
-
-                    stopWatch.Stop();
-                    TimeSpan ts = stopWatch.Elapsed;
-                    string eclapsedTime = String.Format("{0:00}:{1:00}:{2:00}:{3:00}", ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds / 10);
-                    Console.WriteLine("RunTime " + eclapsedTime);
                 }
-                _isSuccess = true;
-                return true;
+                //ComOleg TODELETE
+                //FreqHistogram fqTemp = new FreqHistogram(dimension + 1);
+                //fqTemp.EventReportProgress += _onProgressChanged;
+                //fqTemp.EventReportProcess += _onProcessChanged;
+                //fqTemp.Calculate(pFileName);
+                //if (_isDimensionMax(fqTemp) == true)
+                //{
+                //	_bIsSuccess = true;
+                //	return true;
+                //}
+
+                Pk = _getPk(markTableBuffer);
+
+                if (Pk < alpha)
+                {
+                    _isSuccess = false;
+                    return false;
+                }
             }
-            catch (FileNotFoundException ex)
-            {
-                Console.WriteLine(ex.Message);
-                return false;
-            }
+            _isSuccess = true;
+            return true;
         }
 
         /// <summary>
-        /// Запись статистик в файл (ToDelete)
+        /// Запись статистик в файл (TODELETE)
         /// </summary>
-        /// <param name="pFileName">Имя файла</param>
-        public void PrintInFile(string pFileName)
+        /// <param name="fileName">Имя файла</param>
+        public void PrintInFile(string fileName)
         {
-            Stream fs = new FileStream(pFileName, FileMode.Append, FileAccess.Write);
+            Stream fs = new FileStream(fileName, FileMode.Append, FileAccess.Write);
             using (BinaryWriter bw = new BinaryWriter(fs))
             {
                 string str = $"Test 2.1: ";
@@ -133,8 +117,17 @@ namespace MetodikaLib.Tests
             }
         }
 
+        /// <summary>
+        /// Формирование строки результата тестирования
+        /// </summary>
+        /// <returns>Строка результата тестирования</returns>
         public override string ToString()
         {
+            if(_statistics.Count == 0)
+            {
+                return _type == GammaType.InputGamma ? "Тест 2.1 не проводился!\n" : "Тест 3.2 не проводился!\n";
+            }
+
             string strResult = string.Empty;
             strResult = _type == GammaType.InputGamma ? $"\nТест 2.1: Проверка гипотезы независимости знаков в исходной последовательности\t" : $"\nТест 3.2: Проверка гипотезы независимости знаков в выходной последовательности\t";
             strResult = _isSuccess == true ? $"{strResult}Kmax = {_statistics.Count}\t" : $"{strResult}Kmax = Не определено\t";
@@ -147,155 +140,165 @@ namespace MetodikaLib.Tests
                 strResult = $"{strResult}\n\t\t{i + 1}\t{_statistics[i]}\t{_pValues[i]}";
             }
 
-            strResult = _isSuccess == true ? strResult = $"{strResult}\n\n" : strResult = $"{strResult}\tFail\n\n";
+            strResult = _isSuccess == true ? $"{strResult}\n\n" : $"{strResult}\tFail\n\n";
             return strResult;
         }
 
         /// <summary>
         /// Рассчет p-value
         /// </summary>
-        /// <param name="pFreqHistogram">Гистограмма частот</param>
+        /// <param name="markTable">Маркировочная таблица</param>
         /// <returns>Значение p-value</returns>
-        private double _getPk(MarkTable pFreqHistogram)
+        private double _getPk(MarkTable markTable)
         {
-            ProcessChanged(this, $"Рассчет массивов u и v для k = {pFreqHistogram.Dimension}");
-            int iDimensionV = pFreqHistogram.Dimension - 1;
-            double dPk;
-            long[] arV = new long[1 << iDimensionV];
-            long[] arU = new long[2];
+            ProcessChanged?.Invoke(this, $"Рассчет массивов u и v для k = {markTable.Dimension}");
+            int dimensionV = markTable.Dimension - 1;
+            double Pk;
+            long[] Vs = new long[1 << dimensionV];
+            long[] Us = new long[2];
 
-            for (int i = 0; i < arV.Length; i++)
+            for (int i = 0; i < Vs.Length; i++)
             {
-                arV[i] = pFreqHistogram.Table[i * 2] + pFreqHistogram.Table[i * 2 + 1];
-                arU[0] += pFreqHistogram.Table[i * 2];
-                arU[1] += pFreqHistogram.Table[i * 2 + 1];
-                //EventProgressPercent(this, SupportFunction.GetPercent(i + 1, arV.Length));
+                Vs[i] = markTable.Table[i * 2] + markTable.Table[i * 2 + 1];
+                Us[0] += markTable.Table[i * 2];
+                Us[1] += markTable.Table[i * 2 + 1];
+                ProgressChanged?.Invoke(this, Tools.GetPercent(i + 1, Vs.Length));
             }
 
 
-            double dStatistic = _getStatistic(pFreqHistogram, arV, arU);
+            double dStatistic = _getStatistic(markTable, Vs, Us);
             _statistics.Add(dStatistic);
-            dPk = 1 - ChiSquared.CDF((1 << iDimensionV) - 1, dStatistic);
-            _pValues.Add(dPk);
+            Pk = 1 - ChiSquared.CDF((1 << dimensionV) - 1, dStatistic);
+            _pValues.Add(Pk);
 
-            return dPk;
+            return Pk;
         }
 
         /// <summary>
         /// Рассчет статистики
         /// </summary>
-        /// <param name="pFreqHistogram">Гистограмма частот</param>
-        /// <param name="pV">Массив v</param>
-        /// <param name="pU">Массив u</param>
+        /// <param name="markTable">Маркировочная таблица</param>
+        /// <param name="Vs">Массив v</param>
+        /// <param name="Us">Массив u</param>
         /// <returns>Значение статистики</returns>
-        private double _getStatistic(FreqHistogram pFreqHistogram, long[] pV, long[] pU)
+        private double _getStatistic(MarkTable markTable, long[] Vs, long[] Us)
         {
-            ProcessChanged(this, $"Рассчет статистики для k = {pFreqHistogram.IDimension}");
-            double dStatistic = 0;
-            long lBufVector = 0;
+            ProcessChanged?.Invoke(this, $"Рассчет статистики для k = {markTable.Dimension}");
+            double statistic = 0;
+            long bufVector = 0;
 
-            BigInteger biFirstProduct;
-            BigInteger biSecondProduct;
-            BigInteger biElementSquare;
+            BigInteger firstProduct;
+            BigInteger secondProduct;
+            BigInteger elementSquare;
 
-            for (int i = 0; i < pV.Length; i++)
+            for (int i = 0; i < Vs.Length; i++)
             {
-                lBufVector = i << 1;
+                bufVector = i << 1;
                 for (int j = 0; j < 2; j++)
                 {
-                    biFirstProduct = (BigInteger)pFreqHistogram.LNmVectors * pFreqHistogram.ArHistogram[lBufVector];
-                    biSecondProduct = (BigInteger)pV[i] * pU[j];
-                    biElementSquare = biFirstProduct - biSecondProduct;
-                    dStatistic += SupportFunction.BigIntDevider((BigInteger.Pow(biFirstProduct - biSecondProduct, 2)), biSecondProduct);
-                    lBufVector |= 1;
+                    firstProduct = (BigInteger)markTable.NmVectors * markTable.Table[bufVector];
+                    secondProduct = (BigInteger)Vs[i] * Us[j];
+                    elementSquare = firstProduct - secondProduct;
+                    statistic += Tools.BigIntDevider((BigInteger.Pow(firstProduct - secondProduct, 2)), secondProduct);
+                    bufVector |= 1;
                 }
-                ProgressChanged(this, SupportFunction.GetPercent(i + 1, pV.Length));
+                ProgressChanged?.Invoke(this, Tools.GetPercent(i + 1, Vs.Length));
             }
-            dStatistic /= pFreqHistogram.LNmVectors;
+            statistic /= markTable.NmVectors;
 
-            return dStatistic;
+            return statistic;
         }
 
         /// <summary>
         /// Функция проверки максимального значения размерности векторов
         /// </summary>
-        /// <param name="pFreqHistogram">Гистограмма частот</param>
+        /// <param name="markTable">Маркировочная таблица</param>
         /// <returns>Результат проверки</returns>
-        private bool _isDimensionMax(FreqHistogram pFreqHistogram)
+        private bool _isDimensionMax(MarkTable markTable)
         {
-            ProcessChanged(this, $"Проверка k={pFreqHistogram.IDimension} на максимальность");
-            for (int i = 0; i < pFreqHistogram.ArHistogram.Length; i++)
+            ProcessChanged?.Invoke(this, $"Проверка k={markTable.Dimension} на максимальность");
+            for (int i = 0; i < markTable.Table.Length; i++)
             {
-                if (pFreqHistogram.ArHistogram[i] < Tools.WEAK_BORDER)
+                if (markTable.Table[i] < Constants.WEAK_BORDER)
                 {
                     return true;
                 }
-                ProgressChanged(this, SupportFunction.GetPercent(i + 1, pFreqHistogram.ArHistogram.Length));
+                ProgressChanged?.Invoke(this, Tools.GetPercent(i + 1, markTable.Table.Length));
             }
 
             return false;
         }
 
+        /// <summary>
+        /// Функция вызова события изменения прогресса проведения теста
+        /// </summary>
+        /// <param name="sender">Объект изменения</param>
+        /// <param name="e">Процент прогресса</param>
         private void _onProgressChanged(object sender, int e)
         {
-            ProgressChanged(this, e);
-        }
-
-        private void _onProcessChanged(object sender, string e)
-        {
-            ProcessChanged(this, e);
+            ProgressChanged?.Invoke(this, e);
         }
 
         /// <summary>
-        /// Функция рассчета статистики независимости знако (ToDelete)
+        /// Функция вызова события изменения этапа проведения теста
+        /// </summary>
+        /// <param name="sender">Объект изменения</param>
+        /// <param name="e">Название этапа</param>
+        private void _onProcessChanged(object sender, string e)
+        {
+            ProcessChanged?.Invoke(this, e);
+        }
+
+        /// <summary>
+        /// Функция рассчета статистики независимости знаков (ToDelete)
         /// </summary>
         /// <param name="pFileName">Имя файла с данными</param>
         /// <returns>Результат теста</returns>
-        public bool TestOld(string pFileName, double pAlpha)
-        {
-            double dPk = 0;
+        //public bool TestOld(string pFileName, double pAlpha)
+        //{
+        //    double dPk = 0;
 
-            Stopwatch stopWatch = new Stopwatch();
+        //    Stopwatch stopWatch = new Stopwatch();
 
 
-            try
-            {
-                for (int dimension = _beginK; dimension < Tools.MIN_MAX_K; dimension++)
-                {
-                    stopWatch.Start();
+        //    try
+        //    {
+        //        for (int dimension = _beginK; dimension < Constants.MIN_MAX_K; dimension++)
+        //        {
+        //            stopWatch.Start();
 
-                    Console.WriteLine($"k = {dimension}");
-                    FreqHistogram freqHistogram = new FreqHistogram(dimension + 1, 1);
-                    freqHistogram.Calculate(pFileName);
+        //            Console.WriteLine($"k = {dimension}");
+        //            FreqHistogram freqHistogram = new FreqHistogram(dimension + 1, 1);
+        //            freqHistogram.Calculate(pFileName);
 
-                    if (_isDimensionMax(freqHistogram) == true)
-                    {
-                        _isSuccess = true;
-                        return true;
-                    }
+        //            if (_isDimensionMax(freqHistogram) == true)
+        //            {
+        //                _isSuccess = true;
+        //                return true;
+        //            }
 
-                    dPk = _getPk(freqHistogram);
-                    Console.WriteLine($"k = {dimension}; Pk = {dPk}");
+        //            dPk = _getPk(freqHistogram);
+        //            Console.WriteLine($"k = {dimension}; Pk = {dPk}");
 
-                    if (dPk < pAlpha)
-                    {
-                        _isSuccess = false;
-                        return false;
-                    }
+        //            if (dPk < pAlpha)
+        //            {
+        //                _isSuccess = false;
+        //                return false;
+        //            }
 
-                    stopWatch.Stop();
-                    TimeSpan ts = stopWatch.Elapsed;
-                    string eclapsedTime = String.Format("{0:00}:{1:00}:{2:00}:{3:00}", ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds / 10);
-                    Console.WriteLine("RunTime " + eclapsedTime);
-                }
-                _isSuccess = true;
-                return true;
-            }
-            catch (FileNotFoundException ex)
-            {
-                Console.WriteLine(ex.Message);
-                return false;
-            }
-        }
+        //            stopWatch.Stop();
+        //            TimeSpan ts = stopWatch.Elapsed;
+        //            string eclapsedTime = String.Format("{0:00}:{1:00}:{2:00}:{3:00}", ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds / 10);
+        //            Console.WriteLine("RunTime " + eclapsedTime);
+        //        }
+        //        _isSuccess = true;
+        //        return true;
+        //    }
+        //    catch (FileNotFoundException ex)
+        //    {
+        //        Console.WriteLine(ex.Message);
+        //        return false;
+        //    }
+        //}
     }
 }
