@@ -15,7 +15,7 @@ namespace MetodikaLib.Tests
     /// <summary>
     /// Класс проверки гипотезы независимости знаков (Тест 2.1 и 3.2)
     /// </summary>
-    public class IndependenceSigns
+    public class IndependenceSigns : ITestable
     {
         private int _beginK;
         private List<double> _pValues;
