@@ -54,8 +54,7 @@ namespace MetodikaLib.Tests
         /// Функция тестирования независимости знаков
         /// </summary>
         /// <param name="fileName">Имя файла с данными</param>
-        /// <returns>Результат теста</returns>
-        public bool Test(string fileName, double alpha)
+        public void Test(string fileName, double alpha)
         {
             double Pk = 0;
 
@@ -72,7 +71,7 @@ namespace MetodikaLib.Tests
                 if (_autoBreak == true && _isDimensionMax(markTableBuffer) == true)
                 {
                     _isSuccess = true;
-                    return true;
+                    return;
 
                 }
                 //ComOleg TODELETE
@@ -91,11 +90,11 @@ namespace MetodikaLib.Tests
                 if (Pk < alpha)
                 {
                     _isSuccess = false;
-                    return false;
+                    return;
                 }
             }
             _isSuccess = true;
-            return true;
+            return;
         }
 
         /// <summary>

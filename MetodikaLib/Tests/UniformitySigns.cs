@@ -87,18 +87,17 @@ namespace MetodikaLib.Tests
         /// </summary>
         /// <param name="fileName">Имя файла с данными</param>
         /// <param name="alpha">Альфа</param>
-        /// <returns>Результат теста</returns>
-        public bool Test(string fileName, double alpha)
+        public void Test(string fileName, double alpha)
         {
             _getK(fileName);
             _calculate(fileName);
             if (_PValue < alpha)
             {
                 _isSuccess = false;
-                return false;
+                return;
             }
             _isSuccess = true;
-            return true;
+            return;
         }
 
         /// <summary>

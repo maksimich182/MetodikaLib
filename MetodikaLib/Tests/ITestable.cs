@@ -26,7 +26,6 @@ namespace MetodikaLib.Tests
         /// </summary>
         /// <param name="fileName">Файл с данными</param>
         /// <param name="alpha">Альфа</param>
-        /// <returns>Результат тестирования</returns>
-        bool Test(string fileName, double alpha);
+        void Test(string fileName, double alpha);
     }
 }
