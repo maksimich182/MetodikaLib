@@ -9,7 +9,7 @@ namespace MetodikaLib.Tests
     /// <summary>
     /// Интерфейс теста
     /// </summary>
-    internal interface ITestable
+    public interface ITestable
     {
         /// <summary>
 		/// Событие изменения прогресса выполнения тестирования

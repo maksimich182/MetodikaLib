@@ -23,11 +23,19 @@ namespace MetodikaLib
         /// </summary>
         public const double WEAK_BORDER = 20;
 
-        //Тест 2.2
+        /// <summary>
+        /// Тест 2.2/3.3 - k с которого начнется проверка значений k 
+        /// </summary>
         public const int MIN_K = 40;
+
+        /// <summary>
+        /// Тест 2.2 - значение минимального количества единиц и нулей в каждом векторе разбиения исходной последоватиельности
+        /// </summary>
         public const int SZ_SAMPLE_INPUT = 20;
 
-        //Тест 3.3
+        /// <summary>
+        /// Тест 3.3 - значение минимального количества единиц и нулей в каждом векторе разбиения выходной последоватиельности
+        /// </summary>
         public const int SZ_SAMPLE_EXIT = 100;
 
         //Тест 2.3

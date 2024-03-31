@@ -13,14 +13,14 @@ using static MetodikaLib.Constants;
 namespace MetodikaLib.Tests
 {
     /// <summary>
-    /// Класс проверки гипотезы независимости знаков (Тест 2.1 и 3.2)
+    /// Класс проверки гипотезы независимости знаков (Тест 2.1/3.2)
     /// </summary>
     public class IndependenceSigns : ITestable
     {
         private int _beginK;
         private List<double> _pValues;
         private List<double> _statistics;
-        private bool _isSuccess;
+        private bool? _isSuccess;
         private GammaType _type;
         private bool _autoBreak;
 
@@ -42,7 +42,7 @@ namespace MetodikaLib.Tests
         /// <param name="autoBreak">Если true - рассчеты завершатся в момент провала теста, если false - рассчеты будут проходить до вычисленного kMax</param>
         public IndependenceSigns(int beginK = 1, GammaType type = GammaType.InputGamma, bool autoBreak = true)
         {
-            _isSuccess = false;
+            _isSuccess = null;
             _beginK = beginK;
             _type = type;
             _pValues = new List<double>();
@@ -51,7 +51,7 @@ namespace MetodikaLib.Tests
         }
 
         /// <summary>
-        /// Функция рассчета статистики независимости знаков
+        /// Функция тестирования независимости знаков
         /// </summary>
         /// <param name="fileName">Имя файла с данными</param>
         /// <returns>Результат теста</returns>
@@ -123,7 +123,7 @@ namespace MetodikaLib.Tests
         /// <returns>Строка результата тестирования</returns>
         public override string ToString()
         {
-            if(_statistics.Count == 0)
+            if(_isSuccess is null)
             {
                 return _type == GammaType.InputGamma ? "Тест 2.1 не проводился!\n" : "Тест 3.2 не проводился!\n";
             }
