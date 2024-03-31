@@ -238,7 +238,7 @@ namespace MetodikaLib.Tests
         }
 
         /// <summary>
-        /// Вычисление минимального s
+        /// Вычисление минимального s (ToDelete)
         /// </summary>
         /// <param name="dataBlock">Блок данных</param>
         /// <param name="remain">Данные с прошлых блоков, которые не влезли в последний вектор (ранее необсчитанные данные)</param>
@@ -268,7 +268,7 @@ namespace MetodikaLib.Tests
         }
 
         /// <summary>
-        /// Обсчет блока данных для вычисления Sk
+        /// Обсчет блока данных для вычисления Sk (ToDelete)
         /// </summary>
         /// <param name="blockData">Блок данных</param>
         /// <param name="remain">Данные с прошлых блоков, которые не влезли в последний вектор (необсчитанные данные)</param>
