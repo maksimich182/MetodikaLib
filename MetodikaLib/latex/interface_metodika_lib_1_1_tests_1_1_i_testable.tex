@@ -1,0 +1,92 @@
+\doxysection{Интерфейс Metodika\+Lib.\+Tests.\+ITestable}
+\label{interface_metodika_lib_1_1_tests_1_1_i_testable}\index{MetodikaLib.Tests.ITestable@{MetodikaLib.Tests.ITestable}}
+
+
+Интерфейс теста  
+
+
+Граф наследования\+:Metodika\+Lib.\+Tests.\+ITestable\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{interface_metodika_lib_1_1_tests_1_1_i_testable}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Открытые члены}
+\begin{DoxyCompactItemize}
+\item 
+void \textbf{ Test} (string file\+Name, double alpha)
+\begin{DoxyCompactList}\small\item\em Проведение тестирования \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{События}
+\begin{DoxyCompactItemize}
+\item 
+Event\+Handler$<$ int $>$? \textbf{ Progress\+Changed}
+\begin{DoxyCompactList}\small\item\em Событие изменения прогресса выполнения тестирования \end{DoxyCompactList}\item 
+Event\+Handler$<$ string $>$? \textbf{ Process\+Changed}
+\begin{DoxyCompactList}\small\item\em Событие изменения этапа выполнения тестирования \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Подробное описание}
+Интерфейс теста 
+
+См. определение в файле \textbf{ ITestable.\+cs} строка \textbf{ 12}
+
+
+
+\doxysubsection{Методы}
+\label{interface_metodika_lib_1_1_tests_1_1_i_testable_a779a4947e26a89b5d83d40704226aeb1} 
+\index{MetodikaLib.Tests.ITestable@{MetodikaLib.Tests.ITestable}!Test@{Test}}
+\index{Test@{Test}!MetodikaLib.Tests.ITestable@{MetodikaLib.Tests.ITestable}}
+\doxysubsubsection{Test()}
+{\footnotesize\ttfamily void Metodika\+Lib.\+Tests.\+ITestable.\+Test (\begin{DoxyParamCaption}\item[{string}]{file\+Name,  }\item[{double}]{alpha }\end{DoxyParamCaption})}
+
+
+
+Проведение тестирования 
+
+
+\begin{DoxyParams}{Аргументы}
+{\em file\+Name} & Файл с данными\\
+\hline
+{\em alpha} & Альфа\\
+\hline
+\end{DoxyParams}
+
+
+Замещается в \textbf{ Metodika\+Lib.\+Tests.\+Independence\+Signs} \doxyref{}{стр.}{class_metodika_lib_1_1_tests_1_1_independence_signs_afc6a2a7617674378b548e0960689e81a} и \textbf{ Metodika\+Lib.\+Tests.\+Uniformity\+Signs} \doxyref{}{стр.}{class_metodika_lib_1_1_tests_1_1_uniformity_signs_a916ccec68311a93d66308ab0dc0154d7}.
+
+
+
+\doxysubsection{Cобытия}
+\label{interface_metodika_lib_1_1_tests_1_1_i_testable_a32c8698692dc3da4f8ca5438465bdc66} 
+\index{MetodikaLib.Tests.ITestable@{MetodikaLib.Tests.ITestable}!ProcessChanged@{ProcessChanged}}
+\index{ProcessChanged@{ProcessChanged}!MetodikaLib.Tests.ITestable@{MetodikaLib.Tests.ITestable}}
+\doxysubsubsection{ProcessChanged}
+{\footnotesize\ttfamily Event\+Handler$<$string$>$? Metodika\+Lib.\+Tests.\+ITestable.\+Process\+Changed}
+
+
+
+Событие изменения этапа выполнения тестирования 
+
+
+
+См. определение в файле \textbf{ ITestable.\+cs} строка \textbf{ 22}
+
+\label{interface_metodika_lib_1_1_tests_1_1_i_testable_a79e5561ebbccc9f1433fdfc72ed14772} 
+\index{MetodikaLib.Tests.ITestable@{MetodikaLib.Tests.ITestable}!ProgressChanged@{ProgressChanged}}
+\index{ProgressChanged@{ProgressChanged}!MetodikaLib.Tests.ITestable@{MetodikaLib.Tests.ITestable}}
+\doxysubsubsection{ProgressChanged}
+{\footnotesize\ttfamily Event\+Handler$<$int$>$? Metodika\+Lib.\+Tests.\+ITestable.\+Progress\+Changed}
+
+
+
+Событие изменения прогресса выполнения тестирования 
+
+
+
+См. определение в файле \textbf{ ITestable.\+cs} строка \textbf{ 17}
+
+
+
+Объявления и описания членов интерфейса находятся в файле\+:\begin{DoxyCompactItemize}
+\item 
+Tests/\textbf{ ITestable.\+cs}\end{DoxyCompactItemize}

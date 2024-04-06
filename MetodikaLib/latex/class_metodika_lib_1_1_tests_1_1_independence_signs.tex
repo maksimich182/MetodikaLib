@@ -1,0 +1,169 @@
+\doxysection{Класс Metodika\+Lib.\+Tests.\+Independence\+Signs}
+\label{class_metodika_lib_1_1_tests_1_1_independence_signs}\index{MetodikaLib.Tests.IndependenceSigns@{MetodikaLib.Tests.IndependenceSigns}}
+
+
+Класс проверки гипотезы независимости знаков (Тест 2.\+1/3.2)  
+
+
+Граф наследования\+:Metodika\+Lib.\+Tests.\+Independence\+Signs\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_metodika_lib_1_1_tests_1_1_independence_signs}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Открытые члены}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Independence\+Signs} (int beginK=1, Gamma\+Type type=Gamma\+Type.\+Input\+Gamma, bool auto\+Break=true)
+\begin{DoxyCompactList}\small\item\em Конструктор класса проверки гипотезы независимости знаков \end{DoxyCompactList}\item 
+void \textbf{ Test} (string file\+Name, double alpha)
+\begin{DoxyCompactList}\small\item\em Функция тестирования независимости знаков \end{DoxyCompactList}\item 
+void \textbf{ Print\+In\+File} (string file\+Name)
+\begin{DoxyCompactList}\small\item\em Запись статистик в файл (TODELETE) \end{DoxyCompactList}\item 
+override string \textbf{ To\+String} ()
+\begin{DoxyCompactList}\small\item\em Формирование строки результата тестирования \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{События}
+\begin{DoxyCompactItemize}
+\item 
+Event\+Handler$<$ int $>$? \textbf{ Progress\+Changed}
+\begin{DoxyCompactList}\small\item\em Событие изменения прогресса проведения теста \end{DoxyCompactList}\item 
+Event\+Handler$<$ string $>$? \textbf{ Process\+Changed}
+\begin{DoxyCompactList}\small\item\em Событие изменения этапа проведения теста \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{События унаследованные от \textbf{ Metodika\+Lib.\+Tests.\+ITestable}}
+\begin{DoxyCompactItemize}
+\item 
+Event\+Handler$<$ int $>$? \textbf{ Progress\+Changed}
+\begin{DoxyCompactList}\small\item\em Событие изменения прогресса выполнения тестирования \end{DoxyCompactList}\item 
+Event\+Handler$<$ string $>$? \textbf{ Process\+Changed}
+\begin{DoxyCompactList}\small\item\em Событие изменения этапа выполнения тестирования \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Подробное описание}
+Класс проверки гипотезы независимости знаков (Тест 2.\+1/3.2) 
+
+См. определение в файле \textbf{ Independence\+Signs.\+cs} строка \textbf{ 18}
+
+
+
+\doxysubsection{Конструктор(ы)}
+\label{class_metodika_lib_1_1_tests_1_1_independence_signs_abb2ec5cf063bd823389c5bb66bb4d802} 
+\index{MetodikaLib.Tests.IndependenceSigns@{MetodikaLib.Tests.IndependenceSigns}!IndependenceSigns@{IndependenceSigns}}
+\index{IndependenceSigns@{IndependenceSigns}!MetodikaLib.Tests.IndependenceSigns@{MetodikaLib.Tests.IndependenceSigns}}
+\doxysubsubsection{IndependenceSigns()}
+{\footnotesize\ttfamily Metodika\+Lib.\+Tests.\+Independence\+Signs.\+Independence\+Signs (\begin{DoxyParamCaption}\item[{int}]{beginK = {\ttfamily 1},  }\item[{Gamma\+Type}]{type = {\ttfamily GammaType\+:\+:InputGamma},  }\item[{bool}]{auto\+Break = {\ttfamily true} }\end{DoxyParamCaption})}
+
+
+
+Конструктор класса проверки гипотезы независимости знаков 
+
+
+\begin{DoxyParams}{Аргументы}
+{\em beginK} & Значение k с которого начинаем рассчеты\\
+\hline
+{\em type} & Тип гаммы\\
+\hline
+{\em auto\+Break} & Если true -\/ рассчеты завершатся в момент провала теста, если false -\/ рассчеты будут проходить до вычисленного k\+Max\\
+\hline
+\end{DoxyParams}
+
+
+См. определение в файле \textbf{ Independence\+Signs.\+cs} строка \textbf{ 43}
+
+
+
+\doxysubsection{Методы}
+\label{class_metodika_lib_1_1_tests_1_1_independence_signs_a0b0632a862f020836713d1a175a67cae} 
+\index{MetodikaLib.Tests.IndependenceSigns@{MetodikaLib.Tests.IndependenceSigns}!PrintInFile@{PrintInFile}}
+\index{PrintInFile@{PrintInFile}!MetodikaLib.Tests.IndependenceSigns@{MetodikaLib.Tests.IndependenceSigns}}
+\doxysubsubsection{PrintInFile()}
+{\footnotesize\ttfamily void Metodika\+Lib.\+Tests.\+Independence\+Signs.\+Print\+In\+File (\begin{DoxyParamCaption}\item[{string}]{file\+Name }\end{DoxyParamCaption})}
+
+
+
+Запись статистик в файл (TODELETE) 
+
+
+\begin{DoxyParams}{Аргументы}
+{\em file\+Name} & Имя файла\\
+\hline
+\end{DoxyParams}
+
+
+См. определение в файле \textbf{ Independence\+Signs.\+cs} строка \textbf{ 104}
+
+\label{class_metodika_lib_1_1_tests_1_1_independence_signs_afc6a2a7617674378b548e0960689e81a} 
+\index{MetodikaLib.Tests.IndependenceSigns@{MetodikaLib.Tests.IndependenceSigns}!Test@{Test}}
+\index{Test@{Test}!MetodikaLib.Tests.IndependenceSigns@{MetodikaLib.Tests.IndependenceSigns}}
+\doxysubsubsection{Test()}
+{\footnotesize\ttfamily void Metodika\+Lib.\+Tests.\+Independence\+Signs.\+Test (\begin{DoxyParamCaption}\item[{string}]{file\+Name,  }\item[{double}]{alpha }\end{DoxyParamCaption})}
+
+
+
+Функция тестирования независимости знаков 
+
+
+\begin{DoxyParams}{Аргументы}
+{\em file\+Name} & Имя файла с данными\\
+\hline
+\end{DoxyParams}
+
+
+Замещает \textbf{ Metodika\+Lib.\+Tests.\+ITestable} \doxyref{}{стр.}{interface_metodika_lib_1_1_tests_1_1_i_testable_a779a4947e26a89b5d83d40704226aeb1}.
+
+
+
+См. определение в файле \textbf{ Independence\+Signs.\+cs} строка \textbf{ 57}
+
+\label{class_metodika_lib_1_1_tests_1_1_independence_signs_a9abcadb22b324b8516e48469450c7b69} 
+\index{MetodikaLib.Tests.IndependenceSigns@{MetodikaLib.Tests.IndependenceSigns}!ToString@{ToString}}
+\index{ToString@{ToString}!MetodikaLib.Tests.IndependenceSigns@{MetodikaLib.Tests.IndependenceSigns}}
+\doxysubsubsection{ToString()}
+{\footnotesize\ttfamily override string Metodika\+Lib.\+Tests.\+Independence\+Signs.\+To\+String (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Формирование строки результата тестирования 
+
+\begin{DoxyReturn}{Возвращает}
+Строка результата тестирования
+\end{DoxyReturn}
+
+
+См. определение в файле \textbf{ Independence\+Signs.\+cs} строка \textbf{ 123}
+
+
+
+\doxysubsection{Cобытия}
+\label{class_metodika_lib_1_1_tests_1_1_independence_signs_a76e256c86a6711ce2434313114659eb6} 
+\index{MetodikaLib.Tests.IndependenceSigns@{MetodikaLib.Tests.IndependenceSigns}!ProcessChanged@{ProcessChanged}}
+\index{ProcessChanged@{ProcessChanged}!MetodikaLib.Tests.IndependenceSigns@{MetodikaLib.Tests.IndependenceSigns}}
+\doxysubsubsection{ProcessChanged}
+{\footnotesize\ttfamily Event\+Handler$<$string$>$? Metodika\+Lib.\+Tests.\+Independence\+Signs.\+Process\+Changed}
+
+
+
+Событие изменения этапа проведения теста 
+
+
+
+См. определение в файле \textbf{ Independence\+Signs.\+cs} строка \textbf{ 35}
+
+\label{class_metodika_lib_1_1_tests_1_1_independence_signs_a2f25a88c1734110d68c0ab8bb6fe3aee} 
+\index{MetodikaLib.Tests.IndependenceSigns@{MetodikaLib.Tests.IndependenceSigns}!ProgressChanged@{ProgressChanged}}
+\index{ProgressChanged@{ProgressChanged}!MetodikaLib.Tests.IndependenceSigns@{MetodikaLib.Tests.IndependenceSigns}}
+\doxysubsubsection{ProgressChanged}
+{\footnotesize\ttfamily Event\+Handler$<$int$>$? Metodika\+Lib.\+Tests.\+Independence\+Signs.\+Progress\+Changed}
+
+
+
+Событие изменения прогресса проведения теста 
+
+
+
+См. определение в файле \textbf{ Independence\+Signs.\+cs} строка \textbf{ 30}
+
+
+
+Объявления и описания членов класса находятся в файле\+:\begin{DoxyCompactItemize}
+\item 
+Tests/\textbf{ Independence\+Signs.\+cs}\end{DoxyCompactItemize}

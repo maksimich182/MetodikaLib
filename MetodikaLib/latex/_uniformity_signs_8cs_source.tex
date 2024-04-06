@@ -1,0 +1,289 @@
+\doxysection{Uniformity\+Signs.\+cs}
+\label{_uniformity_signs_8cs_source}\index{Tests/UniformitySigns.cs@{Tests/UniformitySigns.cs}}
+\textbf{ См. документацию.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{keyword}{using\ }MathNet.Numerics.Distributions;}
+\DoxyCodeLine{00002\ \textcolor{keyword}{using\ }MihStatLibrary.Data;}
+\DoxyCodeLine{00003\ \textcolor{keyword}{using\ }MihStatLibrary;}
+\DoxyCodeLine{00004\ \textcolor{keyword}{using\ }System;}
+\DoxyCodeLine{00005\ \textcolor{keyword}{using\ }System.Collections.Generic;}
+\DoxyCodeLine{00006\ \textcolor{keyword}{using\ }System.Linq;}
+\DoxyCodeLine{00007\ \textcolor{keyword}{using\ }System.Numerics;}
+\DoxyCodeLine{00008\ \textcolor{keyword}{using\ }System.Text;}
+\DoxyCodeLine{00009\ \textcolor{keyword}{using\ }System.Threading.Tasks;}
+\DoxyCodeLine{00010\ \textcolor{keyword}{using\ }static\ MetodikaLib.Constants;}
+\DoxyCodeLine{00011\ \textcolor{keyword}{using\ }MihStatLibrary.Calculators;}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{keyword}{namespace\ }MetodikaLib.Tests}
+\DoxyCodeLine{00014\ \{}
+\DoxyCodeLine{00018\ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keyword}{class\ }UniformitySigns\ :\ ITestable}
+\DoxyCodeLine{00019\ \ \ \ \ \{}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keyword}{event}\ EventHandler<int>?\ ProgressChanged;}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keyword}{event}\ EventHandler<string>?\ ProcessChanged;}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keywordtype}{int}\ \_dimension;}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keywordtype}{int}\ \_K;}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}\ BigInteger[]\ \_Ujs;}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keywordtype}{double}\ \_statistic;}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keywordtype}{double}\ \_PValue;}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keywordtype}{long}\ \_nmSamples;}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keywordtype}{bool}?\ \_isSuccess;}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keywordtype}{int}\ \_szSample;}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}\ GammaType\ \_type;}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}\ UniformitySigns(\textcolor{keywordtype}{int}\ szSample,\ GammaType\ type\ =\ GammaType.InputGamma)}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \ \ \ \ \_szSample\ =\ szSample;}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \ \ \ \ \_K\ =\ 0;}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \ \ \ \ \_isSuccess\ =\ \textcolor{keyword}{null};}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \ \ \ \ \_statistic\ =\ 0;}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \ \ \ \ \_nmSamples\ =\ 0;}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \ \ \ \ \_dimension\ =\ 0;}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \ \ \ \ \_Ujs\ =\ \textcolor{keyword}{new}\ BigInteger[2];}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keywordtype}{void}\ \_initialiseUS(\textcolor{keywordtype}{string}\ fileName,\ \textcolor{keywordtype}{int}\ dimension)}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \ \ \ \ \_nmSamples\ =\ (long)Math.Floor((\textcolor{keywordtype}{double})(\textcolor{keyword}{new}\ FileInfo(fileName).Length\ *\ Tools.BITS\_IN\_BYTE)\ /\ dimension);}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \ \ \ \ \_dimension\ =\ dimension;}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keywordtype}{void}\ Print()}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \ \ \ \ Console.WriteLine(\$\textcolor{stringliteral}{"{}Тест\ 2.2:\ Однородность"{}});}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \ \ \ \ Console.WriteLine(\$\textcolor{stringliteral}{"{}Pk\ =\ \{\_statistic\}"{}});}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \textcolor{comment}{//ToDelete}}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keywordtype}{void}\ PrintInFile(\textcolor{keywordtype}{string}\ pFileName)}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \ \ \ \ Stream\ fs\ =\ \textcolor{keyword}{new}\ FileStream(pFileName,\ FileMode.Append,\ FileAccess.Write);}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{using}\ (BinaryWriter\ bw\ =\ \textcolor{keyword}{new}\ BinaryWriter(fs))}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{string}\ str\ =\ \$\textcolor{stringliteral}{"{}Test\ 2.2:\ \(\backslash\)t\{\_statistic\}\(\backslash\)t\{\_PValue\}"{}};}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ bw.Write(str);}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ fs.Close();}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keywordtype}{void}\ Test(\textcolor{keywordtype}{string}\ fileName,\ \textcolor{keywordtype}{double}\ alpha)}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \ \ \ \ \_getK(fileName);}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \ \ \ \ \_calculate(fileName);}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\_PValue\ <\ alpha)}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_isSuccess\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \ \ \ \ \_isSuccess\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00102\ }
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keyword}{override}\ \textcolor{keywordtype}{string}\ ToString()}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\_isSuccess\ is\ \textcolor{keyword}{null})}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \_type\ ==\ GammaType.InputGamma\ ?\ \textcolor{stringliteral}{"{}Тест\ 2.2\ не\ проводился!\(\backslash\)n"{}}\ :\ \textcolor{stringliteral}{"{}Тест\ 3.3\ не\ проводился!\(\backslash\)n"{}};}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{string}\ strResult\ =\ \textcolor{keywordtype}{string}.Empty;}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ \ \ \ \ strResult\ =\ \_type\ ==\ GammaType.InputGamma\ ?\ \$\textcolor{stringliteral}{"{}\(\backslash\)nТест\ 2.2:\ Проверка\ гипотезы\ однородности\ знаков\ в\ исходной\ последовательности\(\backslash\)t\(\backslash\)t"{}}\ :\ \$\textcolor{stringliteral}{"{}\(\backslash\)nТест\ 3.3:\ Проверка\ гипотезы\ однородности\ знаков\ в\ выходной\ последовательности\(\backslash\)t\(\backslash\)t"{}};}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ \ \ \ \ strResult\ =\ \_type\ ==\ GammaType.InputGamma\ ?\ \$\textcolor{stringliteral}{"{}\{strResult\}K\(\backslash\)tS\string^(2)\_k\(\backslash\)tP\string^(1)\_k\(\backslash\)nРезультат\(\backslash\)t"{}}\ :\ \$\textcolor{stringliteral}{"{}\{strResult\}K\(\backslash\)tT\string^(2)\_k\(\backslash\)tR\string^(2)\_k\(\backslash\)nРезультат\(\backslash\)t"{}};}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \ \ \ \ strResult\ =\ \_isSuccess\ ==\ \textcolor{keyword}{true}\ ?\ \$\textcolor{stringliteral}{"{}\{strResult\}Тест\ пройден\(\backslash\)t"{}}\ :\ \$\textcolor{stringliteral}{"{}\{strResult\}Тест\ не\ пройден\(\backslash\)t"{}};}
+\DoxyCodeLine{00117\ }
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \ \ \ \ strResult\ =\ \$\textcolor{stringliteral}{"{}\{strResult\}\{\_K\}\(\backslash\)t\{\_statistic\}\(\backslash\)t\{\_PValue\}"{}};}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ \ \ \ \ strResult\ =\ \_isSuccess\ ==\ \textcolor{keyword}{true}\ ?\ \$\textcolor{stringliteral}{"{}\{strResult\}\(\backslash\)n\(\backslash\)n"{}}\ :\ \$\textcolor{stringliteral}{"{}\{strResult\}\(\backslash\)tFail\(\backslash\)n\(\backslash\)n"{}};}
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ strResult;}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00122\ }
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keywordtype}{void}\ \_calculate(\textcolor{keywordtype}{string}\ fileName)}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \ \ \ \ BlockData\ primaryData;}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{string}\ strProcessStatus\ =\ \$\textcolor{stringliteral}{"{}k\ =\ \{\_K\}.\ Вычисление\ статистики"{}};}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \ \ \ \ \_initialiseUS(fileName,\ \_K);}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ \ \ \ \ BigInteger\ remain\ =\ 0;}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ szRemain\ =\ 0;}
+\DoxyCodeLine{00135\ }
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \ \ \ \ FileStream\ fsInputData\ =\ \textcolor{keyword}{new}\ FileStream(fileName,\ FileMode.Open);}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \ \ \ \ primaryData\ =\ \textcolor{keyword}{new}\ BlockData(\textcolor{keyword}{new}\ BlockDataFileSource(fsInputData));}
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ nmBlocks\ =\ Math.Ceiling((\textcolor{keywordtype}{double})fsInputData.Length\ /\ Tools.SIZE\_BLOCK\_BYTES);}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ j\ =\ 0;\ j\ <\ nmBlocks;\ j++)}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ProcessChanged?.Invoke(\textcolor{keyword}{this},\ \$\textcolor{stringliteral}{"{}\{strProcessStatus\}\ (\{j\ +\ 1\}\ блок\ из\ \{nmBlocks\})"{}});}
+\DoxyCodeLine{00142\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ primaryData.GetBlockData(Tools.SIZE\_BLOCK\_BYTES);}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\_calculateSk(primaryData,\ ref\ remain,\ ref\ szRemain);}}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_processData(primaryData,\ ref\ remain,\ ref\ szRemain,\ \_calculateData);}
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ \ \ \ \ \_statistic\ =\ \_nmSamples\ *\ \_statistic;}
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \ \ \ \ \_PValue\ =\ 1\ -\/\ ChiSquared.CDF(\_nmSamples\ -\/\ 1,\ \_statistic);}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ \ \ \ \ fsInputData.Close();}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00150\ }
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keywordtype}{void}\ \_getK(\textcolor{keywordtype}{string}\ fileName)}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \ \ \ \ BlockData\ primaryData;}
+\DoxyCodeLine{00158\ }
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ dimension\ =\ Constants.MIN\_K;\ ;\ dimension++)}
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{string}\ currentSLabel\ =\ \$\textcolor{stringliteral}{"{}Проверка\ для\ s\ =\ \{dimension\}"{}};}
+\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ FileStream\ fsInputData\ =\ \textcolor{keyword}{new}\ FileStream(fileName,\ FileMode.Open);}
+\DoxyCodeLine{00163\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{try}}
+\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_initialiseUS(fileName,\ dimension);}
+\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_resetUj();}
+\DoxyCodeLine{00167\ }
+\DoxyCodeLine{00168\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ BigInteger\ remain\ =\ 0;}
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ szRemain\ =\ 0;}
+\DoxyCodeLine{00170\ }
+\DoxyCodeLine{00171\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ primaryData\ =\ \textcolor{keyword}{new}\ BlockData(\textcolor{keyword}{new}\ BlockDataFileSource(fsInputData));}
+\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ nmBlocks\ =\ Math.Ceiling((\textcolor{keywordtype}{double})fsInputData.Length\ /\ Tools.SIZE\_BLOCK\_BYTES);}
+\DoxyCodeLine{00173\ }
+\DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ j\ =\ 0;\ j\ <\ nmBlocks;\ j++)}
+\DoxyCodeLine{00175\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00176\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ProcessChanged?.Invoke(\textcolor{keyword}{this},\ \$\textcolor{stringliteral}{"{}\{currentSLabel\}\ (\{j\ +\ 1\}\ блок\ из\ \{nmBlocks\})"{}});}
+\DoxyCodeLine{00177\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ primaryData.GetBlockData(Tools.SIZE\_BLOCK\_BYTES);}
+\DoxyCodeLine{00178\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\_calculateMinS(primaryData,\ ref\ remain,\ ref\ szRemain);}}
+\DoxyCodeLine{00179\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_processData(primaryData,\ ref\ remain,\ ref\ szRemain,\ \_checkData);}
+\DoxyCodeLine{00180\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ fsInputData.Close();}
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_K\ =\ dimension;}
+\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{catch}\ (TestExceptions)}
+\DoxyCodeLine{00185\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00186\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ fsInputData.Close();}
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00188\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00189\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00190\ }
+\DoxyCodeLine{00194\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keywordtype}{void}\ \_resetUj()}
+\DoxyCodeLine{00195\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00196\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ \_Ujs.Length;\ i++)}
+\DoxyCodeLine{00197\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00198\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_Ujs[i]\ =\ 0;}
+\DoxyCodeLine{00199\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00200\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00201\ }
+\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}\ delegate\ \textcolor{keywordtype}{void}\ \_operationWithData(ref\ BigInteger\ data,\ ref\ \textcolor{keywordtype}{int}\ szData);}
+\DoxyCodeLine{00208\ }
+\DoxyCodeLine{00216\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keywordtype}{void}\ \_processData(BlockData\ blockData,\ ref\ BigInteger\ remain,\ ref\ \textcolor{keywordtype}{int}\ szRemain,\ \_operationWithData\ operationWithData)}
+\DoxyCodeLine{00217\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00218\ \ \ \ \ \ \ \ \ \ \ \ \ BigInteger\ dataBuffer\ =\ 0;}
+\DoxyCodeLine{00219\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ szBuffer\ =\ 0;}
+\DoxyCodeLine{00220\ }
+\DoxyCodeLine{00221\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ counterReadElements\ =\ 0;}
+\DoxyCodeLine{00222\ }
+\DoxyCodeLine{00223\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (szRemain\ !=\ 0)}
+\DoxyCodeLine{00224\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00225\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ dataBuffer\ =\ remain;}
+\DoxyCodeLine{00226\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ szBuffer\ =\ szRemain;}
+\DoxyCodeLine{00227\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00228\ }
+\DoxyCodeLine{00229\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (counterReadElements\ <\ blockData.Data?.Length)}
+\DoxyCodeLine{00230\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00231\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_getDataForCalculate(blockData,\ ref\ dataBuffer,\ ref\ szBuffer,\ ref\ counterReadElements);}
+\DoxyCodeLine{00232\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ operationWithData(ref\ dataBuffer,\ ref\ szBuffer);}
+\DoxyCodeLine{00233\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ProgressChanged?.Invoke(\textcolor{keyword}{this},\ Tools.GetPercent(counterReadElements,\ blockData.Data.Length));}
+\DoxyCodeLine{00234\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00235\ }
+\DoxyCodeLine{00236\ \ \ \ \ \ \ \ \ \ \ \ \ remain\ =\ dataBuffer;}
+\DoxyCodeLine{00237\ \ \ \ \ \ \ \ \ \ \ \ \ szRemain\ =\ szBuffer;}
+\DoxyCodeLine{00238\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00239\ }
+\DoxyCodeLine{00246\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keywordtype}{void}\ \_calculateMinS(BlockData\ dataBlock,\ ref\ BigInteger\ remain,\ ref\ \textcolor{keywordtype}{int}\ szRemain)}
+\DoxyCodeLine{00247\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00248\ \ \ \ \ \ \ \ \ \ \ \ \ BigInteger\ dataBuffer\ =\ 0;}
+\DoxyCodeLine{00249\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ szBuffer\ =\ 0;}
+\DoxyCodeLine{00250\ }
+\DoxyCodeLine{00251\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ counterReadElements\ =\ 0;}
+\DoxyCodeLine{00252\ }
+\DoxyCodeLine{00253\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (szRemain\ !=\ 0)}
+\DoxyCodeLine{00254\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00255\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ dataBuffer\ =\ remain;}
+\DoxyCodeLine{00256\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ szBuffer\ =\ szRemain;}
+\DoxyCodeLine{00257\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00258\ }
+\DoxyCodeLine{00259\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (counterReadElements\ <\ dataBlock.Data?.Length)}
+\DoxyCodeLine{00260\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00261\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_getDataForCalculate(dataBlock,\ ref\ dataBuffer,\ ref\ szBuffer,\ ref\ counterReadElements);}
+\DoxyCodeLine{00262\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_checkData(ref\ dataBuffer,\ ref\ szBuffer);}
+\DoxyCodeLine{00263\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ProgressChanged?.Invoke(\textcolor{keyword}{this},\ Tools.GetPercent(counterReadElements,\ dataBlock.Data.Length));}
+\DoxyCodeLine{00264\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00265\ }
+\DoxyCodeLine{00266\ \ \ \ \ \ \ \ \ \ \ \ \ remain\ =\ dataBuffer;}
+\DoxyCodeLine{00267\ \ \ \ \ \ \ \ \ \ \ \ \ szRemain\ =\ szBuffer;}
+\DoxyCodeLine{00268\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00269\ }
+\DoxyCodeLine{00276\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keywordtype}{void}\ \_calculateSk(BlockData\ blockData,\ ref\ BigInteger\ remain,\ ref\ \textcolor{keywordtype}{int}\ szRemain)}
+\DoxyCodeLine{00277\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00278\ \ \ \ \ \ \ \ \ \ \ \ \ BigInteger\ dataBuffer\ =\ 0;}
+\DoxyCodeLine{00279\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ szBuffer\ =\ 0;}
+\DoxyCodeLine{00280\ }
+\DoxyCodeLine{00281\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ counterReadElements\ =\ 0;}
+\DoxyCodeLine{00282\ }
+\DoxyCodeLine{00283\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (szRemain\ !=\ 0)}
+\DoxyCodeLine{00284\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00285\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ dataBuffer\ =\ remain;}
+\DoxyCodeLine{00286\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ szBuffer\ =\ szRemain;}
+\DoxyCodeLine{00287\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00288\ }
+\DoxyCodeLine{00289\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (counterReadElements\ <\ blockData.Data?.Length)}
+\DoxyCodeLine{00290\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00291\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_getDataForCalculate(blockData,\ ref\ dataBuffer,\ ref\ szBuffer,\ ref\ counterReadElements);}
+\DoxyCodeLine{00292\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_calculateData(ref\ dataBuffer,\ ref\ szBuffer);}
+\DoxyCodeLine{00293\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ProgressChanged?.Invoke(\textcolor{keyword}{this},\ Tools.GetPercent(counterReadElements,\ blockData.Data.Length));}
+\DoxyCodeLine{00294\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00295\ }
+\DoxyCodeLine{00296\ \ \ \ \ \ \ \ \ \ \ \ \ remain\ =\ dataBuffer;}
+\DoxyCodeLine{00297\ \ \ \ \ \ \ \ \ \ \ \ \ szRemain\ =\ szBuffer;}
+\DoxyCodeLine{00298\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00299\ }
+\DoxyCodeLine{00307\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keywordtype}{void}\ \_getDataForCalculate(BlockData\ blockData,\ ref\ BigInteger\ dataBuffer,\ ref\ \textcolor{keywordtype}{int}\ szBuffer,\ ref\ \textcolor{keywordtype}{int}\ counterReadElements)}
+\DoxyCodeLine{00308\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00309\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (szBuffer\ <\ \_dimension)}
+\DoxyCodeLine{00310\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00311\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ dataBuffer\ |=\ (BigInteger)blockData.Data![counterReadElements++]\ <<\ szBuffer;}
+\DoxyCodeLine{00312\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ szBuffer\ +=\ Tools.BITS\_IN\_BYTE;}
+\DoxyCodeLine{00313\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (counterReadElements\ ==\ blockData.Data.Length)}
+\DoxyCodeLine{00314\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00315\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00316\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00317\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00318\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00319\ }
+\DoxyCodeLine{00325\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keywordtype}{void}\ \_checkData(ref\ BigInteger\ dataBuffer,\ ref\ \textcolor{keywordtype}{int}\ szBuffer)}
+\DoxyCodeLine{00326\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00327\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{long}\ onesCounter\ =\ 0;}
+\DoxyCodeLine{00328\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{long}\ minNmSign\ =\ 0;}
+\DoxyCodeLine{00329\ }
+\DoxyCodeLine{00330\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (szBuffer\ >=\ \_dimension)}
+\DoxyCodeLine{00331\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00332\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ onesCounter\ =\ OnesCalculator.Calculate(dataBuffer,\ \_dimension);}
+\DoxyCodeLine{00333\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_Ujs[0]\ +=\ \_dimension\ -\/\ onesCounter;}
+\DoxyCodeLine{00334\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_Ujs[1]\ +=\ onesCounter;}
+\DoxyCodeLine{00335\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ minNmSign\ =\ Math.Min(onesCounter,\ \_dimension\ -\/\ onesCounter);}
+\DoxyCodeLine{00336\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (minNmSign\ <\ \_szSample)}
+\DoxyCodeLine{00337\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00338\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ \textcolor{keyword}{new}\ TestExceptions(\$\textcolor{stringliteral}{"{}Минимальное\ количество\ знаков\ <\ \{\_szSample\}"{}});}
+\DoxyCodeLine{00339\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00340\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ dataBuffer\ >>=\ \_dimension;}
+\DoxyCodeLine{00341\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ szBuffer\ -\/=\ \_dimension;}
+\DoxyCodeLine{00342\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00343\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00344\ }
+\DoxyCodeLine{00350\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keywordtype}{void}\ \_calculateData(ref\ BigInteger\ dataBuffer,\ ref\ \textcolor{keywordtype}{int}\ szBuffer)}
+\DoxyCodeLine{00351\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00352\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{long}\ iOneCounter\ =\ 0;}
+\DoxyCodeLine{00353\ }
+\DoxyCodeLine{00354\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (szBuffer\ >=\ \_dimension)}
+\DoxyCodeLine{00355\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00356\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ iOneCounter\ =\ OnesCalculator.Calculate(dataBuffer,\ \_dimension);}
+\DoxyCodeLine{00357\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_statistic\ +=\ Tools.BigIntDevider(Math.Pow((\_dimension\ -\/\ iOneCounter)\ -\/\ (Tools.BigIntDevider(\_Ujs[0],\ \_nmSamples)),\ 2),\ \_Ujs[0]);}
+\DoxyCodeLine{00358\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_statistic\ +=\ Tools.BigIntDevider(Math.Pow(iOneCounter\ -\/\ (Tools.BigIntDevider(\_Ujs[1],\ \_nmSamples)),\ 2),\ \_Ujs[1]);}
+\DoxyCodeLine{00359\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ dataBuffer\ >>=\ \_dimension;}
+\DoxyCodeLine{00360\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ szBuffer\ -\/=\ \_dimension;}
+\DoxyCodeLine{00361\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00362\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00363\ \ \ \ \ \}}
+\DoxyCodeLine{00364\ \}}
+
+\end{DoxyCode}

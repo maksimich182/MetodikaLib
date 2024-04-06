@@ -24,7 +24,7 @@ namespace MetodikaLib
         public const double WEAK_BORDER = 20;
 
         /// <summary>
-        /// Тест 2.2/3.3 - k с которого начнется проверка значений k 
+        /// Тест 2.2/3.3 - k с которого начинается проверка значений k 
         /// </summary>
         public const int MIN_K = 40;
 
@@ -39,8 +39,17 @@ namespace MetodikaLib
         public const int SZ_SAMPLE_EXIT = 100;
 
         //Тест 2.3
+        /// <summary>
+        /// Тест 2.3 - минимальное значение s
+        /// </summary>
         public const int MIN_S = 6;
+        /// <summary>
+        /// Тест 2.3 - максимальное значение s
+        /// </summary>
         public const int MAX_S = 16;
+        /// <summary>
+        /// Тест 2.3 - k с которого начинается проверка значений k
+        /// </summary>
         public const int MIN_K_PA = 2;
 
         /// <summary>

@@ -1,0 +1,250 @@
+\doxysection{Independence\+Signs.\+cs}
+\label{_independence_signs_8cs_source}\index{Tests/IndependenceSigns.cs@{Tests/IndependenceSigns.cs}}
+\textbf{ См. документацию.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{keyword}{using\ }MathNet.Numerics.Distributions;}
+\DoxyCodeLine{00002\ \textcolor{keyword}{using\ }MihStatLibrary;}
+\DoxyCodeLine{00003\ \textcolor{keyword}{using\ }MihStatLibrary.Tables;}
+\DoxyCodeLine{00004\ \textcolor{keyword}{using\ }System;}
+\DoxyCodeLine{00005\ \textcolor{keyword}{using\ }System.Collections.Generic;}
+\DoxyCodeLine{00006\ \textcolor{keyword}{using\ }System.Diagnostics;}
+\DoxyCodeLine{00007\ \textcolor{keyword}{using\ }System.Linq;}
+\DoxyCodeLine{00008\ \textcolor{keyword}{using\ }System.Numerics;}
+\DoxyCodeLine{00009\ \textcolor{keyword}{using\ }System.Text;}
+\DoxyCodeLine{00010\ \textcolor{keyword}{using\ }System.Threading.Tasks;}
+\DoxyCodeLine{00011\ \textcolor{keyword}{using\ }static\ MetodikaLib.Constants;}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{keyword}{namespace\ }MetodikaLib.Tests}
+\DoxyCodeLine{00014\ \{}
+\DoxyCodeLine{00018\ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keyword}{class\ }IndependenceSigns\ :\ ITestable}
+\DoxyCodeLine{00019\ \ \ \ \ \{}
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keywordtype}{int}\ \_beginK;}
+\DoxyCodeLine{00021\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}\ List<double>\ \_pValues;}
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}\ List<double>\ \_statistics;}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keywordtype}{bool}?\ \_isSuccess;}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}\ GammaType\ \_type;}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keywordtype}{bool}\ \_autoBreak;}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keyword}{event}\ EventHandler<int>?\ ProgressChanged;}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keyword}{event}\ EventHandler<string>?\ ProcessChanged;}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}\ IndependenceSigns(\textcolor{keywordtype}{int}\ beginK\ =\ 1,\ GammaType\ type\ =\ GammaType.InputGamma,\ \textcolor{keywordtype}{bool}\ autoBreak\ =\ \textcolor{keyword}{true})}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \ \ \ \ \_isSuccess\ =\ \textcolor{keyword}{null};}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \ \ \ \ \_beginK\ =\ beginK;}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \ \ \ \ \_type\ =\ type;}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \ \ \ \ \_pValues\ =\ \textcolor{keyword}{new}\ List<double>();}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \ \ \ \ \_statistics\ =\ \textcolor{keyword}{new}\ List<double>();}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \ \ \ \ \_autoBreak\ =\ autoBreak;}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keywordtype}{void}\ Test(\textcolor{keywordtype}{string}\ fileName,\ \textcolor{keywordtype}{double}\ alpha)}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ Pk\ =\ 0;}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \ \ \ \ MarkTable\ markTableOriginal\ =\ \textcolor{keyword}{new}\ MarkTable(Constants.MIN\_MAX\_K\ +\ 1,\ 1);}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \ \ \ \ MarkTable\ markTableBuffer;}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \ \ \ \ markTableOriginal.ProgressChanged\ +=\ \_onProgressChanged!;}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \ \ \ \ markTableOriginal.ProcessChanged\ +=\ \_onProcessChanged!;}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \ \ \ \ markTableOriginal.Calculate(fileName);}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ dimension\ =\ \_beginK;\ dimension\ <=\ Constants.MIN\_MAX\_K;\ dimension++)}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ markTableBuffer\ =\ \textcolor{keyword}{new}\ MarkTable(dimension\ +\ 1);}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ markTableOriginal.Reduce(markTableBuffer);}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\_autoBreak\ ==\ \textcolor{keyword}{true}\ \&\&\ \_isDimensionMax(markTableBuffer)\ ==\ \textcolor{keyword}{true})}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_isSuccess\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//ComOleg\ TODELETE}}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//FreqHistogram\ fqTemp\ =\ new\ FreqHistogram(dimension\ +\ 1);}}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//fqTemp.EventReportProgress\ +=\ \_onProgressChanged;}}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//fqTemp.EventReportProcess\ +=\ \_onProcessChanged;}}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//fqTemp.Calculate(pFileName);}}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//if\ (\_isDimensionMax(fqTemp)\ ==\ true)}}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\{}}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \_bIsSuccess\ =\ true;}}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ return\ true;}}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\}}}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Pk\ =\ \_getPk(markTableBuffer);}
+\DoxyCodeLine{00089\ }
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (Pk\ <\ alpha)}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_isSuccess\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \ \ \ \ \_isSuccess\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keywordtype}{void}\ PrintInFile(\textcolor{keywordtype}{string}\ fileName)}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \ \ \ \ Stream\ fs\ =\ \textcolor{keyword}{new}\ FileStream(fileName,\ FileMode.Append,\ FileAccess.Write);}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{using}\ (BinaryWriter\ bw\ =\ \textcolor{keyword}{new}\ BinaryWriter(fs))}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{string}\ str\ =\ \$\textcolor{stringliteral}{"{}Test\ 2.1:\ "{}};}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ \_statistics.Count;\ i++)}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ str\ +=\ \$\textcolor{stringliteral}{"{}\(\backslash\)t\{i\ +\ 1\}\(\backslash\)t\{\_statistics[i]\}\(\backslash\)t\{\_pValues[i]\}"{}};}
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ bw.Write(str);}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ fs.Close();}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00118\ }
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keyword}{override}\ \textcolor{keywordtype}{string}\ ToString()}
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}(\_isSuccess\ is\ \textcolor{keyword}{null})}
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \_type\ ==\ GammaType.InputGamma\ ?\ \textcolor{stringliteral}{"{}Тест\ 2.1\ не\ проводился!\(\backslash\)n"{}}\ :\ \textcolor{stringliteral}{"{}Тест\ 3.2\ не\ проводился!\(\backslash\)n"{}};}
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00129\ }
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{string}\ strResult\ =\ \textcolor{keywordtype}{string}.Empty;}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \ \ \ \ strResult\ =\ \_type\ ==\ GammaType.InputGamma\ ?\ \$\textcolor{stringliteral}{"{}\(\backslash\)nТест\ 2.1:\ Проверка\ гипотезы\ независимости\ знаков\ в\ исходной\ последовательности\(\backslash\)t"{}}\ :\ \$\textcolor{stringliteral}{"{}\(\backslash\)nТест\ 3.2:\ Проверка\ гипотезы\ независимости\ знаков\ в\ выходной\ последовательности\(\backslash\)t"{}};}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \ \ \ \ strResult\ =\ \_isSuccess\ ==\ \textcolor{keyword}{true}\ ?\ \$\textcolor{stringliteral}{"{}\{strResult\}Kmax\ =\ \{\_statistics.Count\}\(\backslash\)t"{}}\ :\ \$\textcolor{stringliteral}{"{}\{strResult\}Kmax\ =\ Не\ определено\(\backslash\)t"{}};}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ \ \ \ \ strResult\ =\ \_type\ ==\ GammaType.InputGamma\ ?\ \$\textcolor{stringliteral}{"{}\{strResult\}K\(\backslash\)tS\string^(1)\_k\(\backslash\)tP\string^(1)\_k\(\backslash\)nРезультат\(\backslash\)t"{}}\ :\ \$\textcolor{stringliteral}{"{}\{strResult\}K\(\backslash\)tT\string^(1)\_k\(\backslash\)tR\string^(1)\_k\(\backslash\)nРезультат\(\backslash\)t"{}};}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \ \ \ \ strResult\ =\ \_isSuccess\ ==\ \textcolor{keyword}{true}\ ?\ \$\textcolor{stringliteral}{"{}\{strResult\}Тест\ пройден\(\backslash\)t"{}}\ :\ \$\textcolor{stringliteral}{"{}\{strResult\}Тест\ не\ пройден\(\backslash\)t"{}};}
+\DoxyCodeLine{00135\ }
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \ \ \ \ strResult\ =\ \$\textcolor{stringliteral}{"{}\{strResult\}\{1\}\(\backslash\)t\{\_statistics[0]\}\(\backslash\)t\{\_pValues[0]\}"{}};}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 1;\ i\ <\ \_statistics.Count;\ i++)}
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ strResult\ =\ \$\textcolor{stringliteral}{"{}\{strResult\}\(\backslash\)n\(\backslash\)t\(\backslash\)t\{i\ +\ 1\}\(\backslash\)t\{\_statistics[i]\}\(\backslash\)t\{\_pValues[i]\}"{}};}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00141\ }
+\DoxyCodeLine{00142\ \ \ \ \ \ \ \ \ \ \ \ \ strResult\ =\ \_isSuccess\ ==\ \textcolor{keyword}{true}\ ?\ \$\textcolor{stringliteral}{"{}\{strResult\}\(\backslash\)n\(\backslash\)n"{}}\ :\ \$\textcolor{stringliteral}{"{}\{strResult\}\(\backslash\)tFail\(\backslash\)n\(\backslash\)n"{}};}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ strResult;}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00145\ }
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keywordtype}{double}\ \_getPk(MarkTable\ markTable)}
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ \ \ \ \ ProcessChanged?.Invoke(\textcolor{keyword}{this},\ \$\textcolor{stringliteral}{"{}Рассчет\ массивов\ u\ и\ v\ для\ k\ =\ \{markTable.Dimension\}"{}});}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ dimensionV\ =\ markTable.Dimension\ -\/\ 1;}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ Pk;}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{long}[]\ Vs\ =\ \textcolor{keyword}{new}\ \textcolor{keywordtype}{long}[1\ <<\ dimensionV];}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{long}[]\ Us\ =\ \textcolor{keyword}{new}\ \textcolor{keywordtype}{long}[2];}
+\DoxyCodeLine{00158\ }
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ Vs.Length;\ i++)}
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Vs[i]\ =\ markTable.Table[i\ *\ 2]\ +\ markTable.Table[i\ *\ 2\ +\ 1];}
+\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Us[0]\ +=\ markTable.Table[i\ *\ 2];}
+\DoxyCodeLine{00163\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Us[1]\ +=\ markTable.Table[i\ *\ 2\ +\ 1];}
+\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ProgressChanged?.Invoke(\textcolor{keyword}{this},\ Tools.GetPercent(i\ +\ 1,\ Vs.Length));}
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00166\ }
+\DoxyCodeLine{00167\ }
+\DoxyCodeLine{00168\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ dStatistic\ =\ \_getStatistic(markTable,\ Vs,\ Us);}
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ \ \ \ \ \_statistics.Add(dStatistic);}
+\DoxyCodeLine{00170\ \ \ \ \ \ \ \ \ \ \ \ \ Pk\ =\ 1\ -\/\ ChiSquared.CDF((1\ <<\ dimensionV)\ -\/\ 1,\ dStatistic);}
+\DoxyCodeLine{00171\ \ \ \ \ \ \ \ \ \ \ \ \ \_pValues.Add(Pk);}
+\DoxyCodeLine{00172\ }
+\DoxyCodeLine{00173\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ Pk;}
+\DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00175\ }
+\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keywordtype}{double}\ \_getStatistic(MarkTable\ markTable,\ \textcolor{keywordtype}{long}[]\ Vs,\ \textcolor{keywordtype}{long}[]\ Us)}
+\DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00185\ \ \ \ \ \ \ \ \ \ \ \ \ ProcessChanged?.Invoke(\textcolor{keyword}{this},\ \$\textcolor{stringliteral}{"{}Рассчет\ статистики\ для\ k\ =\ \{markTable.Dimension\}"{}});}
+\DoxyCodeLine{00186\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ statistic\ =\ 0;}
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{long}\ bufVector\ =\ 0;}
+\DoxyCodeLine{00188\ }
+\DoxyCodeLine{00189\ \ \ \ \ \ \ \ \ \ \ \ \ BigInteger\ firstProduct;}
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ \ \ \ \ BigInteger\ secondProduct;}
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ \ \ \ \ BigInteger\ elementSquare;}
+\DoxyCodeLine{00192\ }
+\DoxyCodeLine{00193\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ Vs.Length;\ i++)}
+\DoxyCodeLine{00194\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00195\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ bufVector\ =\ i\ <<\ 1;}
+\DoxyCodeLine{00196\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ j\ =\ 0;\ j\ <\ 2;\ j++)}
+\DoxyCodeLine{00197\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00198\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ firstProduct\ =\ (BigInteger)markTable.NmVectors\ *\ markTable.Table[bufVector];}
+\DoxyCodeLine{00199\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ secondProduct\ =\ (BigInteger)Vs[i]\ *\ Us[j];}
+\DoxyCodeLine{00200\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ elementSquare\ =\ firstProduct\ -\/\ secondProduct;}
+\DoxyCodeLine{00201\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ statistic\ +=\ Tools.BigIntDevider((BigInteger.Pow(firstProduct\ -\/\ secondProduct,\ 2)),\ secondProduct);}
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ bufVector\ |=\ 1;}
+\DoxyCodeLine{00203\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ProgressChanged?.Invoke(\textcolor{keyword}{this},\ Tools.GetPercent(i\ +\ 1,\ Vs.Length));}
+\DoxyCodeLine{00205\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ \ \ \ \ statistic\ /=\ markTable.NmVectors;}
+\DoxyCodeLine{00207\ }
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ statistic;}
+\DoxyCodeLine{00209\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00210\ }
+\DoxyCodeLine{00216\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keywordtype}{bool}\ \_isDimensionMax(MarkTable\ markTable)}
+\DoxyCodeLine{00217\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00218\ \ \ \ \ \ \ \ \ \ \ \ \ ProcessChanged?.Invoke(\textcolor{keyword}{this},\ \$\textcolor{stringliteral}{"{}Проверка\ k=\{markTable.Dimension\}\ на\ максимальность"{}});}
+\DoxyCodeLine{00219\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ markTable.Table.Length;\ i++)}
+\DoxyCodeLine{00220\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00221\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (markTable.Table[i]\ <\ Constants.WEAK\_BORDER)}
+\DoxyCodeLine{00222\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00223\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00224\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00225\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ProgressChanged?.Invoke(\textcolor{keyword}{this},\ Tools.GetPercent(i\ +\ 1,\ markTable.Table.Length));}
+\DoxyCodeLine{00226\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00227\ }
+\DoxyCodeLine{00228\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00229\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00230\ }
+\DoxyCodeLine{00236\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keywordtype}{void}\ \_onProgressChanged(\textcolor{keywordtype}{object}\ sender,\ \textcolor{keywordtype}{int}\ e)}
+\DoxyCodeLine{00237\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00238\ \ \ \ \ \ \ \ \ \ \ \ \ ProgressChanged?.Invoke(\textcolor{keyword}{this},\ e);}
+\DoxyCodeLine{00239\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00240\ }
+\DoxyCodeLine{00246\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keywordtype}{void}\ \_onProcessChanged(\textcolor{keywordtype}{object}\ sender,\ \textcolor{keywordtype}{string}\ e)}
+\DoxyCodeLine{00247\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00248\ \ \ \ \ \ \ \ \ \ \ \ \ ProcessChanged?.Invoke(\textcolor{keyword}{this},\ e);}
+\DoxyCodeLine{00249\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00250\ }
+\DoxyCodeLine{00256\ \ \ \ \ \ \ \ \ \textcolor{comment}{//public\ bool\ TestOld(string\ pFileName,\ double\ pAlpha)}}
+\DoxyCodeLine{00257\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\{}}
+\DoxyCodeLine{00258\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ double\ dPk\ =\ 0;}}
+\DoxyCodeLine{00259\ }
+\DoxyCodeLine{00260\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ Stopwatch\ stopWatch\ =\ new\ Stopwatch();}}
+\DoxyCodeLine{00261\ }
+\DoxyCodeLine{00262\ }
+\DoxyCodeLine{00263\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ try}}
+\DoxyCodeLine{00264\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \{}}
+\DoxyCodeLine{00265\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ for\ (int\ dimension\ =\ \_beginK;\ dimension\ <\ Constants.MIN\_MAX\_K;\ dimension++)}}
+\DoxyCodeLine{00266\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \{}}
+\DoxyCodeLine{00267\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ stopWatch.Start();}}
+\DoxyCodeLine{00268\ }
+\DoxyCodeLine{00269\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ Console.WriteLine(\$"{}k\ =\ \{dimension\}"{});}}
+\DoxyCodeLine{00270\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ FreqHistogram\ freqHistogram\ =\ new\ FreqHistogram(dimension\ +\ 1,\ 1);}}
+\DoxyCodeLine{00271\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ freqHistogram.Calculate(pFileName);}}
+\DoxyCodeLine{00272\ }
+\DoxyCodeLine{00273\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ if\ (\_isDimensionMax(freqHistogram)\ ==\ true)}}
+\DoxyCodeLine{00274\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ \{}}
+\DoxyCodeLine{00275\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_isSuccess\ =\ true;}}
+\DoxyCodeLine{00276\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ return\ true;}}
+\DoxyCodeLine{00277\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{00278\ }
+\DoxyCodeLine{00279\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ dPk\ =\ \_getPk(freqHistogram);}}
+\DoxyCodeLine{00280\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ Console.WriteLine(\$"{}k\ =\ \{dimension\};\ Pk\ =\ \{dPk\}"{});}}
+\DoxyCodeLine{00281\ }
+\DoxyCodeLine{00282\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ if\ (dPk\ <\ pAlpha)}}
+\DoxyCodeLine{00283\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ \{}}
+\DoxyCodeLine{00284\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_isSuccess\ =\ false;}}
+\DoxyCodeLine{00285\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ return\ false;}}
+\DoxyCodeLine{00286\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{00287\ }
+\DoxyCodeLine{00288\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ stopWatch.Stop();}}
+\DoxyCodeLine{00289\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ TimeSpan\ ts\ =\ stopWatch.Elapsed;}}
+\DoxyCodeLine{00290\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ string\ eclapsedTime\ =\ String.Format("{}\{0:00\}:\{1:00\}:\{2:00\}:\{3:00\}"{},\ ts.Hours,\ ts.Minutes,\ ts.Seconds,\ ts.Milliseconds\ /\ 10);}}
+\DoxyCodeLine{00291\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ Console.WriteLine("{}RunTime\ "{}\ +\ eclapsedTime);}}
+\DoxyCodeLine{00292\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{00293\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \_isSuccess\ =\ true;}}
+\DoxyCodeLine{00294\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ return\ true;}}
+\DoxyCodeLine{00295\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \}}}
+\DoxyCodeLine{00296\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ catch\ (FileNotFoundException\ ex)}}
+\DoxyCodeLine{00297\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \{}}
+\DoxyCodeLine{00298\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ Console.WriteLine(ex.Message);}}
+\DoxyCodeLine{00299\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ return\ false;}}
+\DoxyCodeLine{00300\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \}}}
+\DoxyCodeLine{00301\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\}}}
+\DoxyCodeLine{00302\ \ \ \ \ \}}
+\DoxyCodeLine{00303\ \}}
+
+\end{DoxyCode}

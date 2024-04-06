@@ -1,0 +1,362 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ru">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.10.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>MetodikaLib: Исходный файл Tests/IndependenceSigns.cs</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">MetodikaLib<span id="projectnumber">&#160;1.0</span>
+   </div>
+   <div id="projectbrief">Библиотека для методики</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Создано системой Doxygen 1.10.0 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
+$(function() {
+  initMenu('',true,false,'search.php','Поиск');
+  $(function() { init_search(); });
+});
+/* @license-end */
+</script>
+<div id="main-nav"></div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
+$(function() { codefold.init(0); });
+/* @license-end */
+</script>
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Загрузка...</div>
+<div class="SRStatus" id="Searching">Поиск...</div>
+<div class="SRStatus" id="NoMatches">Не найдено</div>
+</div>
+</div>
+</div>
+</div>
+
+<div id="nav-path" class="navpath">
+  <ul>
+<li class="navelem"><a class="el" href="dir_33c78a012c8d08979f57a54a07694c46.html">Tests</a></li>  </ul>
+</div>
+</div><!-- top -->
+<div class="header">
+  <div class="headertitle"><div class="title">IndependenceSigns.cs</div></div>
+</div><!--header-->
+<div class="contents">
+<a href="_independence_signs_8cs.html">См. документацию.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="keyword">using </span>MathNet.Numerics.Distributions;</div>
+<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="keyword">using </span>MihStatLibrary;</div>
+<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="keyword">using </span>MihStatLibrary.Tables;</div>
+<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="keyword">using </span>System;</div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="keyword">using </span>System.Collections.Generic;</div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="keyword">using </span>System.Diagnostics;</div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="keyword">using </span>System.Linq;</div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="keyword">using </span>System.Numerics;</div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="keyword">using </span>System.Text;</div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="keyword">using </span>System.Threading.Tasks;</div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="keyword">using </span>static <a class="code hl_namespace" href="namespace_metodika_lib.html">MetodikaLib</a>.<a class="code hl_class" href="class_metodika_lib_1_1_constants.html">Constants</a>;</div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> </div>
+<div class="foldopen" id="foldopen00013" data-start="{" data-end="}">
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno"><a class="line" href="namespace_metodika_lib_1_1_tests.html">   13</a></span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespace_metodika_lib_1_1_tests.html">MetodikaLib.Tests</a></div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>{</div>
+<div class="foldopen" id="foldopen00018" data-start="{" data-end="};">
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno"><a class="line" href="class_metodika_lib_1_1_tests_1_1_independence_signs.html">   18</a></span>    <span class="keyword">public</span> <span class="keyword">class </span><a class="code hl_class" href="class_metodika_lib_1_1_tests_1_1_independence_signs.html">IndependenceSigns</a> : <a class="code hl_interface" href="interface_metodika_lib_1_1_tests_1_1_i_testable.html">ITestable</a></div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>    {</div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>        <span class="keyword">private</span> <span class="keywordtype">int</span> _beginK;</div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>        <span class="keyword">private</span> List&lt;double&gt; _pValues;</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>        <span class="keyword">private</span> List&lt;double&gt; _statistics;</div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>        <span class="keyword">private</span> <span class="keywordtype">bool</span>? _isSuccess;</div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>        <span class="keyword">private</span> GammaType _type;</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>        <span class="keyword">private</span> <span class="keywordtype">bool</span> _autoBreak;</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span> </div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno"><a class="line" href="class_metodika_lib_1_1_tests_1_1_independence_signs.html#a2f25a88c1734110d68c0ab8bb6fe3aee">   30</a></span>        <span class="keyword">public</span> <span class="keyword">event</span> EventHandler&lt;int&gt;? <a class="code hl_event" href="class_metodika_lib_1_1_tests_1_1_independence_signs.html#a2f25a88c1734110d68c0ab8bb6fe3aee">ProgressChanged</a>;</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span> </div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno"><a class="line" href="class_metodika_lib_1_1_tests_1_1_independence_signs.html#a76e256c86a6711ce2434313114659eb6">   35</a></span>        <span class="keyword">public</span> <span class="keyword">event</span> EventHandler&lt;string&gt;? <a class="code hl_event" href="class_metodika_lib_1_1_tests_1_1_independence_signs.html#a76e256c86a6711ce2434313114659eb6">ProcessChanged</a>;</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span> </div>
+<div class="foldopen" id="foldopen00043" data-start="{" data-end="}">
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno"><a class="line" href="class_metodika_lib_1_1_tests_1_1_independence_signs.html#abb2ec5cf063bd823389c5bb66bb4d802">   43</a></span>        <span class="keyword">public</span> <a class="code hl_function" href="class_metodika_lib_1_1_tests_1_1_independence_signs.html#abb2ec5cf063bd823389c5bb66bb4d802">IndependenceSigns</a>(<span class="keywordtype">int</span> beginK = 1, GammaType type = GammaType.InputGamma, <span class="keywordtype">bool</span> autoBreak = <span class="keyword">true</span>)</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>        {</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>            _isSuccess = <span class="keyword">null</span>;</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>            _beginK = beginK;</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>            _type = type;</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>            _pValues = <span class="keyword">new</span> List&lt;double&gt;();</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>            _statistics = <span class="keyword">new</span> List&lt;double&gt;();</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>            _autoBreak = autoBreak;</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>        }</div>
+</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span> </div>
+<div class="foldopen" id="foldopen00057" data-start="{" data-end="}">
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno"><a class="line" href="class_metodika_lib_1_1_tests_1_1_independence_signs.html#afc6a2a7617674378b548e0960689e81a">   57</a></span>        <span class="keyword">public</span> <span class="keywordtype">void</span> <a class="code hl_function" href="class_metodika_lib_1_1_tests_1_1_independence_signs.html#afc6a2a7617674378b548e0960689e81a">Test</a>(<span class="keywordtype">string</span> fileName, <span class="keywordtype">double</span> alpha)</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>        {</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>            <span class="keywordtype">double</span> Pk = 0;</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span> </div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>            MarkTable markTableOriginal = <span class="keyword">new</span> MarkTable(<a class="code hl_class" href="class_metodika_lib_1_1_constants.html">Constants</a>.<a class="code hl_variable" href="class_metodika_lib_1_1_constants.html#a1892df009612686273768248249553d9">MIN_MAX_K</a> + 1, 1);</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>            MarkTable markTableBuffer;</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>            markTableOriginal.ProgressChanged += _onProgressChanged!;</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>            markTableOriginal.ProcessChanged += _onProcessChanged!;</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>            markTableOriginal.Calculate(fileName);</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>            <span class="keywordflow">for</span> (<span class="keywordtype">int</span> dimension = _beginK; dimension &lt;= <a class="code hl_class" href="class_metodika_lib_1_1_constants.html">Constants</a>.<a class="code hl_variable" href="class_metodika_lib_1_1_constants.html#a1892df009612686273768248249553d9">MIN_MAX_K</a>; dimension++)</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>            {</div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span> </div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>                markTableBuffer = <span class="keyword">new</span> MarkTable(dimension + 1);</div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>                markTableOriginal.Reduce(markTableBuffer);</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>                <span class="keywordflow">if</span> (_autoBreak == <span class="keyword">true</span> &amp;&amp; _isDimensionMax(markTableBuffer) == <span class="keyword">true</span>)</div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>                {</div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>                    _isSuccess = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>                    <span class="keywordflow">return</span>;</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span> </div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>                }</div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>                <span class="comment">//ComOleg TODELETE</span></div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>                <span class="comment">//FreqHistogram fqTemp = new FreqHistogram(dimension + 1);</span></div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>                <span class="comment">//fqTemp.EventReportProgress += _onProgressChanged;</span></div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>                <span class="comment">//fqTemp.EventReportProcess += _onProcessChanged;</span></div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>                <span class="comment">//fqTemp.Calculate(pFileName);</span></div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>                <span class="comment">//if (_isDimensionMax(fqTemp) == true)</span></div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>                <span class="comment">//{</span></div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>                <span class="comment">//  _bIsSuccess = true;</span></div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>                <span class="comment">//  return true;</span></div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>                <span class="comment">//}</span></div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span> </div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>                Pk = _getPk(markTableBuffer);</div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span> </div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>                <span class="keywordflow">if</span> (Pk &lt; alpha)</div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>                {</div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>                    _isSuccess = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>                    <span class="keywordflow">return</span>;</div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>                }</div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>            }</div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>            _isSuccess = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>            <span class="keywordflow">return</span>;</div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>        }</div>
+</div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span> </div>
+<div class="foldopen" id="foldopen00104" data-start="{" data-end="}">
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno"><a class="line" href="class_metodika_lib_1_1_tests_1_1_independence_signs.html#a0b0632a862f020836713d1a175a67cae">  104</a></span>        <span class="keyword">public</span> <span class="keywordtype">void</span> <a class="code hl_function" href="class_metodika_lib_1_1_tests_1_1_independence_signs.html#a0b0632a862f020836713d1a175a67cae">PrintInFile</a>(<span class="keywordtype">string</span> fileName)</div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>        {</div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>            Stream fs = <span class="keyword">new</span> FileStream(fileName, FileMode.Append, FileAccess.Write);</div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>            <span class="keyword">using</span> (BinaryWriter bw = <span class="keyword">new</span> BinaryWriter(fs))</div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>            {</div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>                <span class="keywordtype">string</span> str = $<span class="stringliteral">&quot;Test 2.1: &quot;</span>;</div>
+<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>                <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; _statistics.Count; i++)</div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>                {</div>
+<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>                    str += $<span class="stringliteral">&quot;\t{i + 1}\t{_statistics[i]}\t{_pValues[i]}&quot;</span>;</div>
+<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>                }</div>
+<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>                bw.Write(str);</div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>                fs.Close();</div>
+<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>            }</div>
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>        }</div>
+</div>
+<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span> </div>
+<div class="foldopen" id="foldopen00123" data-start="{" data-end="}">
+<div class="line"><a id="l00123" name="l00123"></a><span class="lineno"><a class="line" href="class_metodika_lib_1_1_tests_1_1_independence_signs.html#a9abcadb22b324b8516e48469450c7b69">  123</a></span>        <span class="keyword">public</span> <span class="keyword">override</span> <span class="keywordtype">string</span> <a class="code hl_function" href="class_metodika_lib_1_1_tests_1_1_independence_signs.html#a9abcadb22b324b8516e48469450c7b69">ToString</a>()</div>
+<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span>        {</div>
+<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span>            <span class="keywordflow">if</span>(_isSuccess is <span class="keyword">null</span>)</div>
+<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span>            {</div>
+<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span>                <span class="keywordflow">return</span> _type == GammaType.InputGamma ? <span class="stringliteral">&quot;Тест 2.1 не проводился!\n&quot;</span> : <span class="stringliteral">&quot;Тест 3.2 не проводился!\n&quot;</span>;</div>
+<div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>            }</div>
+<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span> </div>
+<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span>            <span class="keywordtype">string</span> strResult = <span class="keywordtype">string</span>.Empty;</div>
+<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span>            strResult = _type == GammaType.InputGamma ? $<span class="stringliteral">&quot;\nТест 2.1: Проверка гипотезы независимости знаков в исходной последовательности\t&quot;</span> : $<span class="stringliteral">&quot;\nТест 3.2: Проверка гипотезы независимости знаков в выходной последовательности\t&quot;</span>;</div>
+<div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span>            strResult = _isSuccess == <span class="keyword">true</span> ? $<span class="stringliteral">&quot;{strResult}Kmax = {_statistics.Count}\t&quot;</span> : $<span class="stringliteral">&quot;{strResult}Kmax = Не определено\t&quot;</span>;</div>
+<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span>            strResult = _type == GammaType.InputGamma ? $<span class="stringliteral">&quot;{strResult}K\tS^(1)_k\tP^(1)_k\nРезультат\t&quot;</span> : $<span class="stringliteral">&quot;{strResult}K\tT^(1)_k\tR^(1)_k\nРезультат\t&quot;</span>;</div>
+<div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span>            strResult = _isSuccess == <span class="keyword">true</span> ? $<span class="stringliteral">&quot;{strResult}Тест пройден\t&quot;</span> : $<span class="stringliteral">&quot;{strResult}Тест не пройден\t&quot;</span>;</div>
+<div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span> </div>
+<div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span>            strResult = $<span class="stringliteral">&quot;{strResult}{1}\t{_statistics[0]}\t{_pValues[0]}&quot;</span>;</div>
+<div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span>            <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 1; i &lt; _statistics.Count; i++)</div>
+<div class="line"><a id="l00138" name="l00138"></a><span class="lineno">  138</span>            {</div>
+<div class="line"><a id="l00139" name="l00139"></a><span class="lineno">  139</span>                strResult = $<span class="stringliteral">&quot;{strResult}\n\t\t{i + 1}\t{_statistics[i]}\t{_pValues[i]}&quot;</span>;</div>
+<div class="line"><a id="l00140" name="l00140"></a><span class="lineno">  140</span>            }</div>
+<div class="line"><a id="l00141" name="l00141"></a><span class="lineno">  141</span> </div>
+<div class="line"><a id="l00142" name="l00142"></a><span class="lineno">  142</span>            strResult = _isSuccess == <span class="keyword">true</span> ? $<span class="stringliteral">&quot;{strResult}\n\n&quot;</span> : $<span class="stringliteral">&quot;{strResult}\tFail\n\n&quot;</span>;</div>
+<div class="line"><a id="l00143" name="l00143"></a><span class="lineno">  143</span>            <span class="keywordflow">return</span> strResult;</div>
+<div class="line"><a id="l00144" name="l00144"></a><span class="lineno">  144</span>        }</div>
+</div>
+<div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span> </div>
+<div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span>        <span class="keyword">private</span> <span class="keywordtype">double</span> _getPk(MarkTable markTable)</div>
+<div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span>        {</div>
+<div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span>            <a class="code hl_event" href="class_metodika_lib_1_1_tests_1_1_independence_signs.html#a76e256c86a6711ce2434313114659eb6">ProcessChanged</a>?.Invoke(<span class="keyword">this</span>, $<span class="stringliteral">&quot;Рассчет массивов u и v для k = {markTable.Dimension}&quot;</span>);</div>
+<div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span>            <span class="keywordtype">int</span> dimensionV = markTable.Dimension - 1;</div>
+<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span>            <span class="keywordtype">double</span> Pk;</div>
+<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span>            <span class="keywordtype">long</span>[] Vs = <span class="keyword">new</span> <span class="keywordtype">long</span>[1 &lt;&lt; dimensionV];</div>
+<div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span>            <span class="keywordtype">long</span>[] Us = <span class="keyword">new</span> <span class="keywordtype">long</span>[2];</div>
+<div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span> </div>
+<div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span>            <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; Vs.Length; i++)</div>
+<div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span>            {</div>
+<div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span>                Vs[i] = markTable.Table[i * 2] + markTable.Table[i * 2 + 1];</div>
+<div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span>                Us[0] += markTable.Table[i * 2];</div>
+<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span>                Us[1] += markTable.Table[i * 2 + 1];</div>
+<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span>                <a class="code hl_event" href="class_metodika_lib_1_1_tests_1_1_independence_signs.html#a2f25a88c1734110d68c0ab8bb6fe3aee">ProgressChanged</a>?.Invoke(<span class="keyword">this</span>, Tools.GetPercent(i + 1, Vs.Length));</div>
+<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>            }</div>
+<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span> </div>
+<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span> </div>
+<div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span>            <span class="keywordtype">double</span> dStatistic = _getStatistic(markTable, Vs, Us);</div>
+<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span>            _statistics.Add(dStatistic);</div>
+<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span>            Pk = 1 - ChiSquared.CDF((1 &lt;&lt; dimensionV) - 1, dStatistic);</div>
+<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span>            _pValues.Add(Pk);</div>
+<div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span> </div>
+<div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span>            <span class="keywordflow">return</span> Pk;</div>
+<div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span>        }</div>
+<div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span> </div>
+<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span>        <span class="keyword">private</span> <span class="keywordtype">double</span> _getStatistic(MarkTable markTable, <span class="keywordtype">long</span>[] Vs, <span class="keywordtype">long</span>[] Us)</div>
+<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span>        {</div>
+<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span>            <a class="code hl_event" href="class_metodika_lib_1_1_tests_1_1_independence_signs.html#a76e256c86a6711ce2434313114659eb6">ProcessChanged</a>?.Invoke(<span class="keyword">this</span>, $<span class="stringliteral">&quot;Рассчет статистики для k = {markTable.Dimension}&quot;</span>);</div>
+<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span>            <span class="keywordtype">double</span> statistic = 0;</div>
+<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span>            <span class="keywordtype">long</span> bufVector = 0;</div>
+<div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span> </div>
+<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span>            BigInteger firstProduct;</div>
+<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span>            BigInteger secondProduct;</div>
+<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span>            BigInteger elementSquare;</div>
+<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span> </div>
+<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span>            <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; Vs.Length; i++)</div>
+<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span>            {</div>
+<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span>                bufVector = i &lt;&lt; 1;</div>
+<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span>                <span class="keywordflow">for</span> (<span class="keywordtype">int</span> j = 0; j &lt; 2; j++)</div>
+<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span>                {</div>
+<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span>                    firstProduct = (BigInteger)markTable.NmVectors * markTable.Table[bufVector];</div>
+<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span>                    secondProduct = (BigInteger)Vs[i] * Us[j];</div>
+<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span>                    elementSquare = firstProduct - secondProduct;</div>
+<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span>                    statistic += Tools.BigIntDevider((BigInteger.Pow(firstProduct - secondProduct, 2)), secondProduct);</div>
+<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>                    bufVector |= 1;</div>
+<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>                }</div>
+<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>                <a class="code hl_event" href="class_metodika_lib_1_1_tests_1_1_independence_signs.html#a2f25a88c1734110d68c0ab8bb6fe3aee">ProgressChanged</a>?.Invoke(<span class="keyword">this</span>, Tools.GetPercent(i + 1, Vs.Length));</div>
+<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>            }</div>
+<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>            statistic /= markTable.NmVectors;</div>
+<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span> </div>
+<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>            <span class="keywordflow">return</span> statistic;</div>
+<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>        }</div>
+<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span> </div>
+<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span>        <span class="keyword">private</span> <span class="keywordtype">bool</span> _isDimensionMax(MarkTable markTable)</div>
+<div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span>        {</div>
+<div class="line"><a id="l00218" name="l00218"></a><span class="lineno">  218</span>            <a class="code hl_event" href="class_metodika_lib_1_1_tests_1_1_independence_signs.html#a76e256c86a6711ce2434313114659eb6">ProcessChanged</a>?.Invoke(<span class="keyword">this</span>, $<span class="stringliteral">&quot;Проверка k={markTable.Dimension} на максимальность&quot;</span>);</div>
+<div class="line"><a id="l00219" name="l00219"></a><span class="lineno">  219</span>            <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; markTable.Table.Length; i++)</div>
+<div class="line"><a id="l00220" name="l00220"></a><span class="lineno">  220</span>            {</div>
+<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span>                <span class="keywordflow">if</span> (markTable.Table[i] &lt; <a class="code hl_class" href="class_metodika_lib_1_1_constants.html">Constants</a>.<a class="code hl_variable" href="class_metodika_lib_1_1_constants.html#ad701240ddbf7e3ac49d152939ee5992e">WEAK_BORDER</a>)</div>
+<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span>                {</div>
+<div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span>                    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span>                }</div>
+<div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span>                <a class="code hl_event" href="class_metodika_lib_1_1_tests_1_1_independence_signs.html#a2f25a88c1734110d68c0ab8bb6fe3aee">ProgressChanged</a>?.Invoke(<span class="keyword">this</span>, Tools.GetPercent(i + 1, markTable.Table.Length));</div>
+<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span>            }</div>
+<div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span> </div>
+<div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span>            <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span>        }</div>
+<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span> </div>
+<div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span>        <span class="keyword">private</span> <span class="keywordtype">void</span> _onProgressChanged(<span class="keywordtype">object</span> sender, <span class="keywordtype">int</span> e)</div>
+<div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span>        {</div>
+<div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span>            <a class="code hl_event" href="class_metodika_lib_1_1_tests_1_1_independence_signs.html#a2f25a88c1734110d68c0ab8bb6fe3aee">ProgressChanged</a>?.Invoke(<span class="keyword">this</span>, e);</div>
+<div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span>        }</div>
+<div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span> </div>
+<div class="line"><a id="l00246" name="l00246"></a><span class="lineno">  246</span>        <span class="keyword">private</span> <span class="keywordtype">void</span> _onProcessChanged(<span class="keywordtype">object</span> sender, <span class="keywordtype">string</span> e)</div>
+<div class="line"><a id="l00247" name="l00247"></a><span class="lineno">  247</span>        {</div>
+<div class="line"><a id="l00248" name="l00248"></a><span class="lineno">  248</span>            <a class="code hl_event" href="class_metodika_lib_1_1_tests_1_1_independence_signs.html#a76e256c86a6711ce2434313114659eb6">ProcessChanged</a>?.Invoke(<span class="keyword">this</span>, e);</div>
+<div class="line"><a id="l00249" name="l00249"></a><span class="lineno">  249</span>        }</div>
+<div class="line"><a id="l00250" name="l00250"></a><span class="lineno">  250</span> </div>
+<div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span>        <span class="comment">//public bool TestOld(string pFileName, double pAlpha)</span></div>
+<div class="line"><a id="l00257" name="l00257"></a><span class="lineno">  257</span>        <span class="comment">//{</span></div>
+<div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span>        <span class="comment">//    double dPk = 0;</span></div>
+<div class="line"><a id="l00259" name="l00259"></a><span class="lineno">  259</span> </div>
+<div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span>        <span class="comment">//    Stopwatch stopWatch = new Stopwatch();</span></div>
+<div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span> </div>
+<div class="line"><a id="l00262" name="l00262"></a><span class="lineno">  262</span> </div>
+<div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span>        <span class="comment">//    try</span></div>
+<div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span>        <span class="comment">//    {</span></div>
+<div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span>        <span class="comment">//        for (int dimension = _beginK; dimension &lt; Constants.MIN_MAX_K; dimension++)</span></div>
+<div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span>        <span class="comment">//        {</span></div>
+<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span>        <span class="comment">//            stopWatch.Start();</span></div>
+<div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span> </div>
+<div class="line"><a id="l00269" name="l00269"></a><span class="lineno">  269</span>        <span class="comment">//            Console.WriteLine($&quot;k = {dimension}&quot;);</span></div>
+<div class="line"><a id="l00270" name="l00270"></a><span class="lineno">  270</span>        <span class="comment">//            FreqHistogram freqHistogram = new FreqHistogram(dimension + 1, 1);</span></div>
+<div class="line"><a id="l00271" name="l00271"></a><span class="lineno">  271</span>        <span class="comment">//            freqHistogram.Calculate(pFileName);</span></div>
+<div class="line"><a id="l00272" name="l00272"></a><span class="lineno">  272</span> </div>
+<div class="line"><a id="l00273" name="l00273"></a><span class="lineno">  273</span>        <span class="comment">//            if (_isDimensionMax(freqHistogram) == true)</span></div>
+<div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span>        <span class="comment">//            {</span></div>
+<div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span>        <span class="comment">//                _isSuccess = true;</span></div>
+<div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span>        <span class="comment">//                return true;</span></div>
+<div class="line"><a id="l00277" name="l00277"></a><span class="lineno">  277</span>        <span class="comment">//            }</span></div>
+<div class="line"><a id="l00278" name="l00278"></a><span class="lineno">  278</span> </div>
+<div class="line"><a id="l00279" name="l00279"></a><span class="lineno">  279</span>        <span class="comment">//            dPk = _getPk(freqHistogram);</span></div>
+<div class="line"><a id="l00280" name="l00280"></a><span class="lineno">  280</span>        <span class="comment">//            Console.WriteLine($&quot;k = {dimension}; Pk = {dPk}&quot;);</span></div>
+<div class="line"><a id="l00281" name="l00281"></a><span class="lineno">  281</span> </div>
+<div class="line"><a id="l00282" name="l00282"></a><span class="lineno">  282</span>        <span class="comment">//            if (dPk &lt; pAlpha)</span></div>
+<div class="line"><a id="l00283" name="l00283"></a><span class="lineno">  283</span>        <span class="comment">//            {</span></div>
+<div class="line"><a id="l00284" name="l00284"></a><span class="lineno">  284</span>        <span class="comment">//                _isSuccess = false;</span></div>
+<div class="line"><a id="l00285" name="l00285"></a><span class="lineno">  285</span>        <span class="comment">//                return false;</span></div>
+<div class="line"><a id="l00286" name="l00286"></a><span class="lineno">  286</span>        <span class="comment">//            }</span></div>
+<div class="line"><a id="l00287" name="l00287"></a><span class="lineno">  287</span> </div>
+<div class="line"><a id="l00288" name="l00288"></a><span class="lineno">  288</span>        <span class="comment">//            stopWatch.Stop();</span></div>
+<div class="line"><a id="l00289" name="l00289"></a><span class="lineno">  289</span>        <span class="comment">//            TimeSpan ts = stopWatch.Elapsed;</span></div>
+<div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span>        <span class="comment">//            string eclapsedTime = String.Format(&quot;{0:00}:{1:00}:{2:00}:{3:00}&quot;, ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds / 10);</span></div>
+<div class="line"><a id="l00291" name="l00291"></a><span class="lineno">  291</span>        <span class="comment">//            Console.WriteLine(&quot;RunTime &quot; + eclapsedTime);</span></div>
+<div class="line"><a id="l00292" name="l00292"></a><span class="lineno">  292</span>        <span class="comment">//        }</span></div>
+<div class="line"><a id="l00293" name="l00293"></a><span class="lineno">  293</span>        <span class="comment">//        _isSuccess = true;</span></div>
+<div class="line"><a id="l00294" name="l00294"></a><span class="lineno">  294</span>        <span class="comment">//        return true;</span></div>
+<div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span>        <span class="comment">//    }</span></div>
+<div class="line"><a id="l00296" name="l00296"></a><span class="lineno">  296</span>        <span class="comment">//    catch (FileNotFoundException ex)</span></div>
+<div class="line"><a id="l00297" name="l00297"></a><span class="lineno">  297</span>        <span class="comment">//    {</span></div>
+<div class="line"><a id="l00298" name="l00298"></a><span class="lineno">  298</span>        <span class="comment">//        Console.WriteLine(ex.Message);</span></div>
+<div class="line"><a id="l00299" name="l00299"></a><span class="lineno">  299</span>        <span class="comment">//        return false;</span></div>
+<div class="line"><a id="l00300" name="l00300"></a><span class="lineno">  300</span>        <span class="comment">//    }</span></div>
+<div class="line"><a id="l00301" name="l00301"></a><span class="lineno">  301</span>        <span class="comment">//}</span></div>
+<div class="line"><a id="l00302" name="l00302"></a><span class="lineno">  302</span>    }</div>
+</div>
+<div class="line"><a id="l00303" name="l00303"></a><span class="lineno">  303</span>}</div>
+</div>
+<div class="ttc" id="aclass_metodika_lib_1_1_constants_html"><div class="ttname"><a href="class_metodika_lib_1_1_constants.html">MetodikaLib.Constants</a></div><div class="ttdef"><b>Definition</b> <a href="_constants_8cs_source.html#l00009">Constants.cs:10</a></div></div>
+<div class="ttc" id="aclass_metodika_lib_1_1_constants_html_a1892df009612686273768248249553d9"><div class="ttname"><a href="class_metodika_lib_1_1_constants.html#a1892df009612686273768248249553d9">MetodikaLib.Constants.MIN_MAX_K</a></div><div class="ttdeci">const int MIN_MAX_K</div><div class="ttdoc">Тест 2.1/3.2 - граничное значение размерности маркировочной таблицы</div><div class="ttdef"><b>Definition</b> <a href="_constants_8cs_source.html#l00019">Constants.cs:19</a></div></div>
+<div class="ttc" id="aclass_metodika_lib_1_1_constants_html_ad701240ddbf7e3ac49d152939ee5992e"><div class="ttname"><a href="class_metodika_lib_1_1_constants.html#ad701240ddbf7e3ac49d152939ee5992e">MetodikaLib.Constants.WEAK_BORDER</a></div><div class="ttdeci">const double WEAK_BORDER</div><div class="ttdoc">Тест 2.1/3.2 - граничное значение содержимого маркировочной таблицы</div><div class="ttdef"><b>Definition</b> <a href="_constants_8cs_source.html#l00024">Constants.cs:24</a></div></div>
+<div class="ttc" id="aclass_metodika_lib_1_1_tests_1_1_independence_signs_html"><div class="ttname"><a href="class_metodika_lib_1_1_tests_1_1_independence_signs.html">MetodikaLib.Tests.IndependenceSigns</a></div><div class="ttdoc">Класс проверки гипотезы независимости знаков (Тест 2.1/3.2)</div><div class="ttdef"><b>Definition</b> <a href="#l00018">IndependenceSigns.cs:19</a></div></div>
+<div class="ttc" id="aclass_metodika_lib_1_1_tests_1_1_independence_signs_html_a0b0632a862f020836713d1a175a67cae"><div class="ttname"><a href="class_metodika_lib_1_1_tests_1_1_independence_signs.html#a0b0632a862f020836713d1a175a67cae">MetodikaLib.Tests.IndependenceSigns.PrintInFile</a></div><div class="ttdeci">void PrintInFile(string fileName)</div><div class="ttdoc">Запись статистик в файл (TODELETE)</div><div class="ttdef"><b>Definition</b> <a href="#l00104">IndependenceSigns.cs:104</a></div></div>
+<div class="ttc" id="aclass_metodika_lib_1_1_tests_1_1_independence_signs_html_a2f25a88c1734110d68c0ab8bb6fe3aee"><div class="ttname"><a href="class_metodika_lib_1_1_tests_1_1_independence_signs.html#a2f25a88c1734110d68c0ab8bb6fe3aee">MetodikaLib.Tests.IndependenceSigns.ProgressChanged</a></div><div class="ttdeci">EventHandler&lt; int &gt;? ProgressChanged</div><div class="ttdoc">Событие изменения прогресса проведения теста</div><div class="ttdef"><b>Definition</b> <a href="#l00030">IndependenceSigns.cs:30</a></div></div>
+<div class="ttc" id="aclass_metodika_lib_1_1_tests_1_1_independence_signs_html_a76e256c86a6711ce2434313114659eb6"><div class="ttname"><a href="class_metodika_lib_1_1_tests_1_1_independence_signs.html#a76e256c86a6711ce2434313114659eb6">MetodikaLib.Tests.IndependenceSigns.ProcessChanged</a></div><div class="ttdeci">EventHandler&lt; string &gt;? ProcessChanged</div><div class="ttdoc">Событие изменения этапа проведения теста</div><div class="ttdef"><b>Definition</b> <a href="#l00035">IndependenceSigns.cs:35</a></div></div>
+<div class="ttc" id="aclass_metodika_lib_1_1_tests_1_1_independence_signs_html_a9abcadb22b324b8516e48469450c7b69"><div class="ttname"><a href="class_metodika_lib_1_1_tests_1_1_independence_signs.html#a9abcadb22b324b8516e48469450c7b69">MetodikaLib.Tests.IndependenceSigns.ToString</a></div><div class="ttdeci">override string ToString()</div><div class="ttdoc">Формирование строки результата тестирования</div><div class="ttdef"><b>Definition</b> <a href="#l00123">IndependenceSigns.cs:123</a></div></div>
+<div class="ttc" id="aclass_metodika_lib_1_1_tests_1_1_independence_signs_html_abb2ec5cf063bd823389c5bb66bb4d802"><div class="ttname"><a href="class_metodika_lib_1_1_tests_1_1_independence_signs.html#abb2ec5cf063bd823389c5bb66bb4d802">MetodikaLib.Tests.IndependenceSigns.IndependenceSigns</a></div><div class="ttdeci">IndependenceSigns(int beginK=1, GammaType type=GammaType.InputGamma, bool autoBreak=true)</div><div class="ttdoc">Конструктор класса проверки гипотезы независимости знаков</div><div class="ttdef"><b>Definition</b> <a href="#l00043">IndependenceSigns.cs:43</a></div></div>
+<div class="ttc" id="aclass_metodika_lib_1_1_tests_1_1_independence_signs_html_afc6a2a7617674378b548e0960689e81a"><div class="ttname"><a href="class_metodika_lib_1_1_tests_1_1_independence_signs.html#afc6a2a7617674378b548e0960689e81a">MetodikaLib.Tests.IndependenceSigns.Test</a></div><div class="ttdeci">void Test(string fileName, double alpha)</div><div class="ttdoc">Функция тестирования независимости знаков</div><div class="ttdef"><b>Definition</b> <a href="#l00057">IndependenceSigns.cs:57</a></div></div>
+<div class="ttc" id="ainterface_metodika_lib_1_1_tests_1_1_i_testable_html"><div class="ttname"><a href="interface_metodika_lib_1_1_tests_1_1_i_testable.html">MetodikaLib.Tests.ITestable</a></div><div class="ttdoc">Интерфейс теста</div><div class="ttdef"><b>Definition</b> <a href="_i_testable_8cs_source.html#l00012">ITestable.cs:13</a></div></div>
+<div class="ttc" id="anamespace_metodika_lib_1_1_tests_html"><div class="ttname"><a href="namespace_metodika_lib_1_1_tests.html">MetodikaLib.Tests</a></div><div class="ttdef"><b>Definition</b> <a href="#l00013">IndependenceSigns.cs:14</a></div></div>
+<div class="ttc" id="anamespace_metodika_lib_html"><div class="ttname"><a href="namespace_metodika_lib.html">MetodikaLib</a></div><div class="ttdef"><b>Definition</b> <a href="_constants_8cs_source.html#l00007">Constants.cs:8</a></div></div>
+</div><!-- fragment --></div><!-- contents -->
+<!-- start footer part -->
+<hr class="footer"/><address class="footer"><small>
+Создано системой&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.10.0
+</small></address>
+</body>
+</html>

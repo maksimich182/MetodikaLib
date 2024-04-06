@@ -181,7 +181,7 @@ namespace MetodikaLib.Tests
                     fsInputData.Close();
                     _K = dimension;
                 }
-                catch (TestExceptions)
+                catch (UniformitySignsExceptions)
                 {
                     fsInputData.Close();
                 }
@@ -335,7 +335,7 @@ namespace MetodikaLib.Tests
                 minNmSign = Math.Min(onesCounter, _dimension - onesCounter);
                 if (minNmSign < _szSample)
                 {
-                    throw new TestExceptions($"Минимальное количество знаков < {_szSample}");
+                    throw new UniformitySignsExceptions($"Минимальное количество знаков < {_szSample}");
                 }
                 dataBuffer >>= _dimension;
                 szBuffer -= _dimension;
