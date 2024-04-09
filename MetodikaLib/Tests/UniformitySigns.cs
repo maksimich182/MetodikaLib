@@ -54,35 +54,6 @@ namespace MetodikaLib.Tests
         }
 
         /// <summary>
-        /// Инициализация экземпляра класса
-        /// </summary>
-        /// <param name="fileName">Файл с гаммой</param>
-        /// <param name="dimension">Размерность</param>
-        private void _initialiseUS(string fileName, int dimension)
-        {
-            _nmSamples = (long)Math.Floor((double)(new FileInfo(fileName).Length * Tools.BITS_IN_BYTE) / dimension);
-            _dimension = dimension;
-        }
-
-        public void Print()
-        {
-            Console.WriteLine($"Тест 2.2: Однородность");
-            Console.WriteLine($"Pk = {_statistic}");
-        }
-
-        //ToDelete
-        public void PrintInFile(string pFileName)
-        {
-            Stream fs = new FileStream(pFileName, FileMode.Append, FileAccess.Write);
-            using (BinaryWriter bw = new BinaryWriter(fs))
-            {
-                string str = $"Test 2.2: \t{_statistic}\t{_PValue}";
-                bw.Write(str);
-                fs.Close();
-            }
-        }
-
-        /// <summary>
         /// Функция тестирования однородности знаков
         /// </summary>
         /// <param name="fileName">Имя файла с данными</param>
@@ -118,6 +89,35 @@ namespace MetodikaLib.Tests
             strResult = $"{strResult}{_K}\t{_statistic}\t{_PValue}";
             strResult = _isSuccess == true ? $"{strResult}\n\n" : $"{strResult}\tFail\n\n";
             return strResult;
+        }
+
+        /// <summary>
+        /// Инициализация экземпляра класса
+        /// </summary>
+        /// <param name="fileName">Файл с гаммой</param>
+        /// <param name="dimension">Размерность</param>
+        private void _initialiseUS(string fileName, int dimension)
+        {
+            _nmSamples = (long)Math.Floor((double)(new FileInfo(fileName).Length * Tools.BITS_IN_BYTE) / dimension);
+            _dimension = dimension;
+        }
+
+        public void Print()
+        {
+            Console.WriteLine($"Тест 2.2: Однородность");
+            Console.WriteLine($"Pk = {_statistic}");
+        }
+
+        //ToDelete
+        public void PrintInFile(string pFileName)
+        {
+            Stream fs = new FileStream(pFileName, FileMode.Append, FileAccess.Write);
+            using (BinaryWriter bw = new BinaryWriter(fs))
+            {
+                string str = $"Test 2.2: \t{_statistic}\t{_PValue}";
+                bw.Write(str);
+                fs.Close();
+            }
         }
 
         /// <summary>

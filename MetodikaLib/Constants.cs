@@ -19,7 +19,7 @@ namespace MetodikaLib
         public const int MIN_MAX_K = 24;
 
         /// <summary>
-        /// Тест 2.1/3.2 - граничное значение содержимого маркировочной таблицы
+        /// Тест 2.1/2.3/3.2 - граничное значение содержимого маркировочной таблицы
         /// </summary>
         public const double WEAK_BORDER = 20;
 

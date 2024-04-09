@@ -4,6 +4,7 @@ using MihStatLibrary.Calculators;
 using MihStatLibrary.Tables;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,13 +12,15 @@ using static MetodikaLib.Constants;
 
 namespace MetodikaLib.Tests
 {
-    internal class PolynomialAgreement : ITestable
+    /// <summary>
+    /// Класс проверки согласия распределения числа k-грамм в исходной последовательности с полиномиальным законом (Тест 2.3)
+    /// </summary>
+    public class PolynomialAgreement : ITestable
     {
         private List<double> _statistics;
         private List<double> _pValues;
         private MarkTable _markTableParent;
         private bool? _isSuccess;
-        private bool _isFirstCalculationLoop;
         private int _kMax;
         private List<bool> _results;
 
@@ -38,7 +41,6 @@ namespace MetodikaLib.Tests
             _results = new List<bool>();
             _pValues = new List<double>();
             _statistics = new List<double>();
-            _isFirstCalculationLoop = true;
             _markTableParent = new MarkTable(Constants.MAX_S, 1);
             _markTableParent.ProcessChanged += _onProcessChanged!;
             _markTableParent.ProgressChanged += _onProgressChanged!;
@@ -54,30 +56,22 @@ namespace MetodikaLib.Tests
         //    }
         //}
 
-        public void Test(string pFileName, double pAlpha)
+        public void Test(string fileName, double alpha)
         {
-            _isSuccess = true;
-            try
+            _checkGamma(fileName);
+            _getKMax(fileName);
+            _calculate(fileName);
+            foreach (var element in _pValues)
             {
-                _kMax = _getK(pFileName);
-                _calculate(pFileName, _kMax);
-                foreach (var element in _pValues)
+                if (element < alpha)
                 {
-                    if (element < pAlpha)
-                    {
-                        _results.Add(false);
-                        _isSuccess = false;
-                    }
-                    else
-                    {
-                        _results.Add(true);
-                    }
+                    _results.Add(false);
+                    _isSuccess = false;
                 }
-            }
-            catch (FileNotFoundException ex)
-            {
-                Console.WriteLine(ex.Message);
-                _isSuccess = false;
+                else
+                {
+                    _results.Add(true);
+                }
             }
         }
 
@@ -121,163 +115,161 @@ namespace MetodikaLib.Tests
         //}
 
         /// <summary>
-        /// Получение k
+        /// Вычисление максимального k
         /// </summary>
-        /// <param name="pFileName">Файл с гаммой</param>
+        /// <param name="fileName">Файл с гаммой</param>
         /// <returns>Значение k</returns>
-        private int _getK(string pFileName)
+        private void _getKMax(string fileName)
         {
-            _checkGamma(pFileName);
-
-            return _getSMax(pFileName);
-        }
-
-        /// <summary>
-        /// Получение максимального s
-        /// </summary>
-        /// <returns>Максимального s</returns>
-        private int _getSMax(String pFileName)
-        {
-            object locker = new object();
-
             int nmTokenSource = Constants.MAX_S - Constants.MIN_S;
-            CancellationTokenSource[] ctsArray = new CancellationTokenSource[nmTokenSource];
-            CancellationToken[] tokenArray = new CancellationToken[nmTokenSource];
+            CancellationTokenSource[] ctss = new CancellationTokenSource[nmTokenSource];
+            CancellationToken[] tokens = new CancellationToken[ctss.Length];
 
-            int sMax = Constants.MIN_S;
-
-            for (int i = 0; i < nmTokenSource; i++)
+            for (int i = 0; i < ctss.Length; i++)
             {
-                ctsArray[i] = new CancellationTokenSource();
-                tokenArray[i] = ctsArray[i].Token;
+                ctss[i] = new CancellationTokenSource();
+                tokens[i] = ctss[i].Token;
             }
 
-            List<Task> taskList = new List<Task>();
-
-            for (int dimension = Constants.MAX_S, i = 0; dimension > Constants.MIN_S; dimension--, i++)
+            List<Task> tasks = new List<Task>();
+            int sMax = Constants.MIN_S;
+            int startDimension = Constants.MIN_S + 1;
+            object locker = new object();
+            for (int dimension = startDimension; dimension <= Constants.MAX_S; dimension++)
             {
                 int dimTemp = dimension;
-                MarkTable fqSingleThread = new MarkTable(dimTemp);
-                fqSingleThread.ProcessChanged += _onProcessChanged!;
-                fqSingleThread.ProgressChanged += _onProgressChanged!;
-                taskList.Add(Task.Run(() =>
+                int threadIndexSaver = dimTemp - startDimension;
+                tasks.Add(Task.Run(() =>
                 {
-                    int threadIndexSaver = fqSingleThread.Dimension - (Constants.MIN_S + 1);
-                    fqSingleThread.Calculate(pFileName, tokenArray[threadIndexSaver]);
+                    MarkTable markTable = new MarkTable(dimTemp);
+                    if (markTable.Dimension == 15)
+                    {
+                        markTable.ProcessChanged += _onProcessChanged!;
+                        markTable.ProgressChanged += _onProgressChanged!;
+                    }
 
-                    if (fqSingleThread.Table.Min() >= 20)
+                    markTable.Calculate(fileName, tokens[threadIndexSaver]);
+
+                    if (markTable.Table.Min() >= Constants.WEAK_BORDER)
                     {
                         lock (locker)
                         {
-                            if (sMax < fqSingleThread.Dimension)
+                            if (sMax < markTable.Dimension)
                             {
-                                sMax = fqSingleThread.Dimension;
+                                sMax = markTable.Dimension;
                                 for (int j = threadIndexSaver; j >= 0; j--)
                                 {
-                                    ctsArray[j].Cancel();
+                                    ctss[j].Cancel();
                                 }
                             }
                         }
                     }
-                }));
+                }, tokens[threadIndexSaver]));
             }
 
-            Task.WaitAll(taskList.ToArray());
-            foreach (var cts in ctsArray)
+            Task.WaitAll(tasks.ToArray());
+            foreach (var cts in ctss)
             {
                 cts.Dispose();
             }
-            _isFirstCalculationLoop = false;
-            return sMax;
+            _kMax = sMax;
         }
 
         /// <summary>
         /// Проверка гаммы наличие более 20 k-грамм каждого вида, при k=2..6
         /// </summary>
-        private void _checkGamma(string pFileName)
+        /// <param name="fileName">Файл с гаммой</param>
+        /// <exception cref="PolynomialAgreementException">Исключение, вылетающее в случае, если в файле существуют отрезки бит,
+        /// размерностью от 2 до 6 бит, которые встречаются меньше 20-ти раз в последовательности</exception>
+        private void _checkGamma(string fileName)
         {
             CancellationTokenSource cts = new CancellationTokenSource();
             CancellationToken token = cts.Token;
-            List<Task> taskList = new List<Task>();
+            List<Task> tasks = new List<Task>();
             ProcessChanged?.Invoke(this, "Проверка для k = 2..6");
             for (int dimension = Constants.MIN_K_PA; dimension <= Constants.MIN_S; dimension++)
             {
                 int dimTemp = dimension;
-                MarkTable fqSingleThread = new MarkTable(dimTemp);
-                fqSingleThread.ProcessChanged += _onProcessChanged!;
-                fqSingleThread.ProgressChanged += _onProgressChanged!;
-                taskList.Add(Task.Run(() =>
+                tasks.Add(Task.Run(() =>
                 {
-                    fqSingleThread.Calculate(pFileName, token);
+                    MarkTable markTable = new MarkTable(dimTemp);
+                    if (dimTemp == 3)
+                    {
+                        markTable.ProcessChanged += _onProcessChanged!;
+                        markTable.ProgressChanged += _onProgressChanged!;
+                    }
+                    markTable.Calculate(fileName, token);
 
-                    if (fqSingleThread.Table.Min() < 20)
+                    if (markTable.Table.Min() < Constants.WEAK_BORDER)
                     {
                         cts.Cancel();
                         _isSuccess = false;
                         throw new PolynomialAgreementException($"Количество знаков при k = {dimTemp} < 20. ФДСЧ не забракован. Требуется тестирование на новой последовательности");
                     }
-                }));
+                }, token));
             }
-            Task.WaitAll(taskList.ToArray());
+            Task.WaitAll(tasks.ToArray());
             cts.Dispose();
         }
 
         /// <summary>
         /// Вычисление статистик
         /// </summary>
-        /// <param name="pFileName">Файл с гаммой</param>
-        /// <param name="pKMax">Максимальная размерность k</param>
-        private void _calculate(string pFileName, int pKMax)
+        /// <param name="fileName">Файл с гаммой</param>
+        private void _calculate(string fileName)
         {
             _pValues = new List<double>();
             _statistics = new List<double>();
-            for (int i = 0; i < pKMax - 1; i++)
+            for (int i = 0; i < _kMax - 1; i++)
             {
                 _pValues.Add(0);
                 _statistics.Add(0);
             }
 
-            List<Task> taskList = new List<Task>();
+            List<Task> tasks = new List<Task>();
 
-            for (int i = 2; i <= pKMax; i++)
+            for (int i = 2; i <= _kMax; i++)
             {
-                MarkTable fqChild = new MarkTable(i);
-                fqChild.ProcessChanged += _onProcessChanged!;
-                fqChild.ProgressChanged += _onProgressChanged!;
-
-                Task task = new Task(() => calcFreqHistForSingleThread(fqChild, pFileName));
-                taskList.Add(task);
-                task.Start();
+                MarkTable markTable = new MarkTable(i);
+                if (i == 3)
+                {
+                    markTable.ProcessChanged += _onProcessChanged!;
+                    markTable.ProgressChanged += _onProgressChanged!;
+                }
+                tasks.Add(Task.Run(() =>
+                {
+                    calcFreqHistForSingleThread(markTable, fileName);
+                }));
 
             }
 
-            Task.WaitAll(taskList.ToArray());
+            Task.WaitAll(tasks.ToArray());
 
 
         }
 
-        private void calcFreqHistForSingleThread(MarkTable fqChild, string pFileName)
+        private void calcFreqHistForSingleThread(MarkTable markTable, string fileName)
         {
             double dTetta = 0;
             double dSk = 0;
             double dPi = 0;
 
-            int dimension = fqChild.Dimension;
+            int dimension = markTable.Dimension;
 
-            fqChild.Calculate(pFileName);
+            markTable.Calculate(fileName);
 
-            for (int j = 0; j < fqChild.Table.Length; j++)
+            for (int j = 0; j < markTable.Table.Length; j++)
             {
-                dTetta += fqChild.Table[j] * OnesCalculator.Calculate(j);
+                dTetta += markTable.Table[j] * OnesCalculator.Calculate(j);
             }
-            dTetta /= (fqChild.Dimension * fqChild.NmVectors);
+            dTetta /= (markTable.Dimension * markTable.NmVectors);
 
 
 
             for (int j = 0; j < (1 << dimension) - 1; j++)
             {
                 dPi = Math.Pow(dTetta, OnesCalculator.Calculate(j)) * Math.Pow((1 - dTetta), dimension - OnesCalculator.Calculate(j));
-                dSk += Math.Pow((fqChild.Table[j] - dPi * fqChild.NmVectors), 2) / (dPi * fqChild.NmVectors);
+                dSk += Math.Pow((markTable.Table[j] - dPi * markTable.NmVectors), 2) / (dPi * markTable.NmVectors);
 #if (!DEBUG)
 				//EventProgressPercent(this, SupportFunction.GetPercent(j + 1, (1 << dimension) - 1));
 #endif
@@ -288,19 +280,12 @@ namespace MetodikaLib.Tests
 
         private void _onProgressChanged(object sender, int e)
         {
-
-            if (((MarkTable)sender).Dimension == 3 /*|| ((FreqHistogram)sender).IDimension == 15*/)
-            {
-                ProgressChanged?.Invoke(this, e);
-            }
+            ProgressChanged?.Invoke(this, e);
         }
 
         private void _onProcessChanged(object sender, string e)
         {
-            if (((MarkTable)sender).Dimension == 3 || (((MarkTable)sender).Dimension == 15 && _isFirstCalculationLoop == true))
-            {
-                ProcessChanged?.Invoke(this, e);
-            }
+            ProcessChanged?.Invoke(this, e);
         }
     }
 }
