@@ -56,23 +56,17 @@ namespace MetodikaLib.Tests
         //    }
         //}
 
+        /// <summary>
+        /// Функция проверки согласия распределения с полиномиальным законом
+        /// </summary>
+        /// <param name="fileName">Имя файла с данными</param>
+        /// <param name="alpha">Альфа</param>
         public void Test(string fileName, double alpha)
         {
             _checkGamma(fileName);
             _getKMax(fileName);
             _calculate(fileName);
-            foreach (var element in _pValues)
-            {
-                if (element < alpha)
-                {
-                    _results.Add(false);
-                    _isSuccess = false;
-                }
-                else
-                {
-                    _results.Add(true);
-                }
-            }
+            _checkResult(alpha);
         }
 
         /// <summary>
@@ -81,6 +75,10 @@ namespace MetodikaLib.Tests
         /// <returns>Строка результата тестирования</returns>
         public override string ToString()
         {
+            if (_isSuccess is null)
+            {
+                return "Тест 2.3 не проводился!\n";
+            }
             string strResult = string.Empty;
             strResult = $"\nТест 2.3: Проверка согласия распределения числа k-грамм в исходной последовательности с полиномиальным законом\t";
             strResult = _isSuccess == true ? $"{strResult}Kmax = {_kMax}\t" : $"{strResult}Kmax = Не определено\t";
@@ -113,6 +111,27 @@ namespace MetodikaLib.Tests
         //        fs.Close();
         //    }
         //}
+
+        /// <summary>
+        /// Проверка полученных результатов на предмет справедливости гипотезы
+        /// </summary>
+        /// <param name="alpha">Альфа</param>
+        private void _checkResult(double alpha)
+        {
+            _isSuccess = true;
+            foreach (var element in _pValues)
+            {
+                if (element < alpha)
+                {
+                    _results.Add(false);
+                    _isSuccess = false;
+                }
+                else
+                {
+                    _results.Add(true);
+                }
+            }
+        }
 
         /// <summary>
         /// Вычисление максимального k
@@ -238,17 +257,19 @@ namespace MetodikaLib.Tests
                 }
                 tasks.Add(Task.Run(() =>
                 {
-                    calcFreqHistForSingleThread(markTable, fileName);
+                    _calculateSP(markTable, fileName);
                 }));
-
             }
 
             Task.WaitAll(tasks.ToArray());
-
-
         }
 
-        private void calcFreqHistForSingleThread(MarkTable markTable, string fileName)
+        /// <summary>
+        /// Рассчет значения статистики S и p-value для маркировочной таблицы с определенным значением размерности
+        /// </summary>
+        /// <param name="markTable">Маркировочная таблица</param>
+        /// <param name="fileName">Файл с гаммой</param>
+        private void _calculateSP(MarkTable markTable, string fileName)
         {
             double dTetta = 0;
             double dSk = 0;
@@ -264,25 +285,31 @@ namespace MetodikaLib.Tests
             }
             dTetta /= (markTable.Dimension * markTable.NmVectors);
 
-
-
             for (int j = 0; j < (1 << dimension) - 1; j++)
             {
                 dPi = Math.Pow(dTetta, OnesCalculator.Calculate(j)) * Math.Pow((1 - dTetta), dimension - OnesCalculator.Calculate(j));
                 dSk += Math.Pow((markTable.Table[j] - dPi * markTable.NmVectors), 2) / (dPi * markTable.NmVectors);
-#if (!DEBUG)
-				//EventProgressPercent(this, SupportFunction.GetPercent(j + 1, (1 << dimension) - 1));
-#endif
+                ProgressChanged?.Invoke(this, Tools.GetPercent(j + 1, (1 << dimension) - 1));
             }
             _statistics[dimension - 2] = dSk;
             _pValues[dimension - 2] = (1 - ChiSquared.CDF((1 << dimension) - 2, dSk));
         }
 
+        /// <summary>
+        /// Функция вызова события изменения прогресса проведения теста
+        /// </summary>
+        /// <param name="sender">Объект изменения</param>
+        /// <param name="e">Процент прогресса</param>
         private void _onProgressChanged(object sender, int e)
         {
             ProgressChanged?.Invoke(this, e);
         }
 
+        /// <summary>
+        /// Функция вызова события изменения этапа проведения теста
+        /// </summary>
+        /// <param name="sender">Объект изменения</param>
+        /// <param name="e">Название этапа</param>
         private void _onProcessChanged(object sender, string e)
         {
             ProcessChanged?.Invoke(this, e);
