@@ -34,6 +34,9 @@ namespace MetodikaLib.Tests
         /// </summary>
         public event EventHandler<string>? ProcessChanged;
 
+        /// <summary>
+        /// Конструктор проверки согласия распределения с полиномиальным законом
+        /// </summary>
         public PolynomialAgreement()
         {
             _isSuccess = null;
