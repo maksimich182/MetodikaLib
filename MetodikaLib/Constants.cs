@@ -38,6 +38,11 @@ namespace MetodikaLib
         /// </summary>
         public const int SZ_SAMPLE_EXIT = 100;
 
+        /// <summary>
+        /// Тест 3.4 - максимальное значение k
+        /// </summary>
+        public const int MAX_K = 16;
+
         //Тест 2.3
         /// <summary>
         /// Тест 2.3 - минимальное значение s

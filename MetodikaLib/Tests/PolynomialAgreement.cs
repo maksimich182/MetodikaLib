@@ -13,7 +13,7 @@ using static MetodikaLib.Constants;
 namespace MetodikaLib.Tests
 {
     /// <summary>
-    /// Класс проверки согласия распределения числа k-грамм в исходной последовательности с полиномиальным законом (Тест 2.3)
+    /// Класс проверки согласия распределения числа k-грамм с полиномиальным законом (Тест 2.3/3.4)
     /// </summary>
     public class PolynomialAgreement : ITestable
     {
@@ -23,6 +23,7 @@ namespace MetodikaLib.Tests
         private bool? _isSuccess;
         private int _kMax;
         private List<bool> _results;
+        private GammaType _type;
 
         /// <summary>
         /// Событие изменения прогресса проведения теста
@@ -37,7 +38,8 @@ namespace MetodikaLib.Tests
         /// <summary>
         /// Конструктор проверки согласия распределения с полиномиальным законом
         /// </summary>
-        public PolynomialAgreement()
+        /// <param name="type">Тип гаммы</param>
+        public PolynomialAgreement(GammaType type = GammaType.InputGamma)
         {
             _isSuccess = null;
             _kMax = 0;
@@ -47,17 +49,8 @@ namespace MetodikaLib.Tests
             _markTableParent = new MarkTable(Constants.MAX_S, 1);
             _markTableParent.ProcessChanged += _onProcessChanged!;
             _markTableParent.ProgressChanged += _onProgressChanged!;
+            _type = type;
         }
-
-        //ToDelete
-        //public void Print()
-        //{
-        //    Console.WriteLine($"Тест 2.3: Согласие");
-        //    for (int i = 0; i < _lstStatistic.Count; i++)
-        //    {
-        //        Console.WriteLine($"k = {i + 2}; Pk = {_lstStatistic[i]}");
-        //    }
-        //}
 
         /// <summary>
         /// Функция проверки согласия распределения с полиномиальным законом
@@ -66,8 +59,16 @@ namespace MetodikaLib.Tests
         /// <param name="alpha">Альфа</param>
         public void Test(string fileName, double alpha)
         {
-            _checkGamma(fileName);
-            _getKMax(fileName);
+            if(_type == GammaType.InputGamma)
+            {
+                _checkGamma(fileName);
+                _getKMax(fileName);
+            }
+            else
+            {
+                _kMax = Constants.MAX_K;
+            }
+            
             _calculate(fileName);
             _checkResult(alpha);
         }
@@ -80,14 +81,18 @@ namespace MetodikaLib.Tests
         {
             if (_isSuccess is null)
             {
-                return "Тест 2.3 не проводился!\n";
+                return _type == GammaType.InputGamma ? "Тест 2.3 не проводился!\n" : "Тест 3.4 не проводился!\n";
             }
             string strResult = string.Empty;
-            strResult = $"\nТест 2.3: Проверка согласия распределения числа k-грамм в исходной последовательности с полиномиальным законом\t";
-            strResult = _isSuccess == true ? $"{strResult}Kmax = {_kMax}\t" : $"{strResult}Kmax = Не определено\t";
-            strResult = $"{strResult}K\tS^(3)_k\tP^(1)_k\nРезультат\t";
+            strResult = _type == GammaType.InputGamma ? $"\nТест 2.3: Проверка согласия распределения числа k-грамм в исходной " +
+                $"последовательности с полиномиальным законом\t" :
+                $"\nТест 3.4: Проверка согласия распределения числа k-грамм в выходной последовательности с полиномиальным законом\t";
+            strResult = _type == GammaType.InputGamma ? 
+                _isSuccess == true ? $"{strResult}Kmax = {_kMax}\t" : $"{strResult}Kmax = Не определено\t" :
+                $"{strResult}Kmax = 16\t";
+            strResult = _type == GammaType.InputGamma ? $"{strResult}K\tS^(3)_k\tP^(1)_k\nРезультат\t" :
+                $"{strResult}K\tT^(3)_k\tR^(3)_k\nРезультат\t";
             strResult = _isSuccess == true ? $"{strResult}Тест пройден\t" : $"{strResult}Тест не пройден\t";
-
             strResult = $"{strResult}{2}\t{_statistics[0]}\t{_pValues[0]}";
             for (int i = 1; i < _statistics.Count; i++)
             {
@@ -98,22 +103,6 @@ namespace MetodikaLib.Tests
             strResult = $"{strResult}\n\n";
             return strResult;
         }
-
-        //ToDelete
-        //public void PrintInFile(string pFileName)
-        //{
-        //    Stream fs = new FileStream(pFileName, FileMode.Append, FileAccess.Write);
-        //    using (BinaryWriter bw = new BinaryWriter(fs))
-        //    {
-        //        string str = $"Test 2.3: ";
-        //        for (int i = 0; i < _statistics.Count; i++)
-        //        {
-        //            str += $"\t{i + 2}\t{_statistics[i]}\t{_pValues[i]}";
-        //        }
-        //        bw.Write(str);
-        //        fs.Close();
-        //    }
-        //}
 
         /// <summary>
         /// Проверка полученных результатов на предмет справедливости гипотезы
@@ -274,28 +263,33 @@ namespace MetodikaLib.Tests
         /// <param name="fileName">Файл с гаммой</param>
         private void _calculateSP(MarkTable markTable, string fileName)
         {
-            double dTetta = 0;
-            double dSk = 0;
-            double dPi = 0;
+            double tetta = 0;
+            double Sk = 0;
+            double Pi = 0;
 
             int dimension = markTable.Dimension;
 
             markTable.Calculate(fileName);
 
-            for (int j = 0; j < markTable.Table.Length; j++)
+            if(_type == GammaType.InputGamma)
             {
-                dTetta += markTable.Table[j] * OnesCalculator.Calculate(j);
+                for (int j = 0; j < markTable.Table.Length; j++)
+                {
+                    tetta += markTable.Table[j] * OnesCalculator.Calculate(j);
+                }
+                tetta /= (markTable.Dimension * markTable.NmVectors);
             }
-            dTetta /= (markTable.Dimension * markTable.NmVectors);
 
             for (int j = 0; j < (1 << dimension) - 1; j++)
             {
-                dPi = Math.Pow(dTetta, OnesCalculator.Calculate(j)) * Math.Pow((1 - dTetta), dimension - OnesCalculator.Calculate(j));
-                dSk += Math.Pow((markTable.Table[j] - dPi * markTable.NmVectors), 2) / (dPi * markTable.NmVectors);
+                Pi = _type == GammaType.InputGamma ?
+                    Math.Pow(tetta, OnesCalculator.Calculate(j)) * Math.Pow((1 - tetta), dimension - OnesCalculator.Calculate(j)) :
+                    Math.Pow(2, -j);
+                Sk += Math.Pow((markTable.Table[j] - Pi * markTable.NmVectors), 2) / (Pi * markTable.NmVectors);
                 ProgressChanged?.Invoke(this, Tools.GetPercent(j + 1, (1 << dimension) - 1));
             }
-            _statistics[dimension - 2] = dSk;
-            _pValues[dimension - 2] = (1 - ChiSquared.CDF((1 << dimension) - 2, dSk));
+            _statistics[dimension - 2] = Sk;
+            _pValues[dimension - 2] = (1 - ChiSquared.CDF((1 << dimension) - 2, Sk));
         }
 
         /// <summary>

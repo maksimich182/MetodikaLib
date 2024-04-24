@@ -51,6 +51,7 @@ namespace MetodikaLib.Tests
             _nmSamples = 0;
             _dimension = 0;
             _Ujs = new BigInteger[2];
+            _type = type;
         }
 
         /// <summary>
@@ -82,8 +83,10 @@ namespace MetodikaLib.Tests
                 return _type == GammaType.InputGamma ? "Тест 2.2 не проводился!\n" : "Тест 3.3 не проводился!\n";
             }
             string strResult = string.Empty;
-            strResult = _type == GammaType.InputGamma ? $"\nТест 2.2: Проверка гипотезы однородности знаков в исходной последовательности\t\t" : $"\nТест 3.3: Проверка гипотезы однородности знаков в выходной последовательности\t\t";
-            strResult = _type == GammaType.InputGamma ? $"{strResult}K\tS^(2)_k\tP^(1)_k\nРезультат\t" : $"{strResult}K\tT^(2)_k\tR^(2)_k\nРезультат\t";
+            strResult = _type == GammaType.InputGamma ? $"\nТест 2.2: Проверка гипотезы однородности знаков в исходной последовательности\t\t" :
+                $"\nТест 3.3: Проверка гипотезы однородности знаков в выходной последовательности\t\t";
+            strResult = _type == GammaType.InputGamma ? $"{strResult}K\tS^(2)_k\tP^(1)_k\nРезультат\t" :
+                $"{strResult}K\tT^(2)_k\tR^(2)_k\nРезультат\t";
             strResult = _isSuccess == true ? $"{strResult}Тест пройден\t" : $"{strResult}Тест не пройден\t";
 
             strResult = $"{strResult}{_K}\t{_statistic}\t{_PValue}";
