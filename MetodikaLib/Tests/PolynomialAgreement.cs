@@ -66,6 +66,10 @@ namespace MetodikaLib.Tests
             if(_type == GammaType.InputGamma)
             {
                 _checkGamma(fileName);
+                if(_isNewSeuence == true)
+                {
+                    return;
+                }
                 _getKMax(fileName);
             }
             else
@@ -226,7 +230,6 @@ namespace MetodikaLib.Tests
                         _isSuccess = false;
                         _isNewSeuence = true;
                         _newSequenceMessage = $"Количество знаков при k = {dimTemp} < 20. ФДСЧ не забракован. Требуется тестирование на новой последовательности";
-                        throw new PolynomialAgreementException(_newSequenceMessage);
                     }
                 }, token));
             }
