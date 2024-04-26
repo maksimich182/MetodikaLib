@@ -183,6 +183,7 @@ namespace MetodikaLib.Tests
                     }
                     fsInputData.Close();
                     _K = dimension;
+                    return;
                 }
                 catch (UniformitySignsExceptions)
                 {

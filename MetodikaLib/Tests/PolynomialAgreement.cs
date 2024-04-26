@@ -23,6 +23,8 @@ namespace MetodikaLib.Tests
         private bool? _isSuccess;
         private int _kMax;
         private List<bool> _results;
+        private bool _isNewSeuence;
+        private string _newSequenceMessage;
         private GammaType _type;
 
         /// <summary>
@@ -49,6 +51,8 @@ namespace MetodikaLib.Tests
             _markTableParent = new MarkTable(Constants.MAX_S, 1);
             _markTableParent.ProcessChanged += _onProcessChanged!;
             _markTableParent.ProgressChanged += _onProgressChanged!;
+            _isNewSeuence = false;
+            _newSequenceMessage = string.Empty;
             _type = type;
         }
 
@@ -87,6 +91,11 @@ namespace MetodikaLib.Tests
             strResult = _type == GammaType.InputGamma ? $"\nТест 2.3: Проверка согласия распределения числа k-грамм в исходной " +
                 $"последовательности с полиномиальным законом\t" :
                 $"\nТест 3.4: Проверка согласия распределения числа k-грамм в выходной последовательности с полиномиальным законом\t";
+            if (_isNewSeuence)
+            {
+                strResult += $"\n{_newSequenceMessage}\n\n";
+                return strResult;
+            }
             strResult = _type == GammaType.InputGamma ? 
                 _isSuccess == true ? $"{strResult}Kmax = {_kMax}\t" : $"{strResult}Kmax = Не определено\t" :
                 $"{strResult}Kmax = 16\t";
@@ -215,7 +224,9 @@ namespace MetodikaLib.Tests
                     {
                         cts.Cancel();
                         _isSuccess = false;
-                        throw new PolynomialAgreementException($"Количество знаков при k = {dimTemp} < 20. ФДСЧ не забракован. Требуется тестирование на новой последовательности");
+                        _isNewSeuence = true;
+                        _newSequenceMessage = $"Количество знаков при k = {dimTemp} < 20. ФДСЧ не забракован. Требуется тестирование на новой последовательности";
+                        throw new PolynomialAgreementException(_newSequenceMessage);
                     }
                 }, token));
             }

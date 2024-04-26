@@ -66,7 +66,7 @@ namespace MetodikaLib.Tests
             for (int dimension = _beginK; dimension <= Constants.MIN_MAX_K; dimension++)
             {
 
-                markTableBuffer = new MarkTable(dimension + 1);
+                markTableBuffer = new MarkTable(dimension + 1, 1);
                 markTableOriginal.Reduce(markTableBuffer);
                 if (_autoBreak == true && _isDimensionMax(markTableBuffer) == true)
                 {
