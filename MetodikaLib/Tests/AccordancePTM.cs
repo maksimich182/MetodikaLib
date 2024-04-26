@@ -22,6 +22,11 @@ namespace MetodikaLib.Tests
         double _rightBorder;
 
         /// <summary>
+        /// Результат теста
+        /// </summary>
+        public bool? IsSuccess { get => _isSuccess; }
+
+        /// <summary>
         /// Конструктор проверки соответствия частот знаков в выходной последовательности
         /// </summary>
         public AccordancePTM()

@@ -25,6 +25,11 @@ namespace MetodikaLib.Tests
         private bool _autoBreak;
 
         /// <summary>
+        /// Результат теста
+        /// </summary>
+        public bool? IsSuccess { get => _isSuccess; }
+
+        /// <summary>
         /// Событие изменения прогресса проведения теста
         /// </summary>
         public event EventHandler<int>? ProgressChanged;

@@ -27,6 +27,11 @@ namespace MetodikaLib.Tests
         /// </summary>
         public event EventHandler<string>? ProcessChanged;
 
+        /// <summary>
+        /// Результат теста
+        /// </summary>
+        public bool? IsSuccess { get => _isSuccess; }
+
         private int _dimension;
         private int _K;
         private BigInteger[] _Ujs;

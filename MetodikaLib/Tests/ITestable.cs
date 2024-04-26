@@ -22,6 +22,11 @@ namespace MetodikaLib.Tests
         event EventHandler<string>? ProcessChanged;
 
         /// <summary>
+        /// Результат теста
+        /// </summary>
+        bool? IsSuccess { get;}
+
+        /// <summary>
         /// Проведение тестирования
         /// </summary>
         /// <param name="fileName">Файл с данными</param>

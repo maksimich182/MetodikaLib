@@ -28,6 +28,11 @@ namespace MetodikaLib.Tests
         private GammaType _type;
 
         /// <summary>
+        /// Результат теста
+        /// </summary>
+        public bool? IsSuccess { get => _isSuccess; }
+
+        /// <summary>
         /// Событие изменения прогресса проведения теста
         /// </summary>
         public event EventHandler<int>? ProgressChanged;
